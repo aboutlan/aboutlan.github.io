@@ -6,20 +6,27 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://aboutlan.github.io">
-  <title>Archives: 2021/10 | aboutlan&#39;s Blog</title>
+  <title>iOS: 记一次导航栏平滑过渡的实现 | aboutlan&#39;s Blog</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="关于岚的个人博客，记录生活、技术、随笔。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="aboutlan&#39;s Blog">
-<meta property="og:url" content="https://aboutlan.github.io/archives/2021/10/index.html">
+  <meta name="description" content="随着技术的迭代,现在对App的效果要求越来越高,那么在这篇文章里面我们一起讨论一下如何在控制器做跳转的时候对导航栏做平滑过渡的转场 构思: 首先要获取到导航栏里的子控件来设置其透明度 (实现透明度变化) 为所有控制器添加一个导航栏透明度属性,用于记录当前控制器的导航栏透明度 (记录透明度值) 通过监听手势滑动来获取源和目的控制器,计算从源到目的控制器的透明度变化,来改变导航栏的透明度 (实现平滑过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS: 记一次导航栏平滑过渡的实现">
+<meta property="og:url" content="https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="aboutlan&#39;s Blog">
-<meta property="og:description" content="关于岚的个人博客，记录生活、技术、随笔。">
+<meta property="og:description" content="随着技术的迭代,现在对App的效果要求越来越高,那么在这篇文章里面我们一起讨论一下如何在控制器做跳转的时候对导航栏做平滑过渡的转场 构思: 首先要获取到导航栏里的子控件来设置其透明度 (实现透明度变化) 为所有控制器添加一个导航栏透明度属性,用于记录当前控制器的导航栏透明度 (记录透明度值) 通过监听手势滑动来获取源和目的控制器,计算从源到目的控制器的透明度变化,来改变导航栏的透明度 (实现平滑过">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-c05e3706e2379b77.webp">
+<meta property="og:image" content="https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-9f0734e455f7b1ad.webp">
+<meta property="og:image" content="https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-b062cceee72dd4c1.webp">
+<meta property="og:image" content="https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-68f8ed67253cde46.webp">
+<meta property="article:published_time" content="2017-08-02T09:12:40.000Z">
+<meta property="article:modified_time" content="2021-10-19T05:33:05.777Z">
 <meta property="article:author" content="关于岚">
 <meta property="article:tag" content="HTML,CSS,JavaScript,iOS">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-c05e3706e2379b77.webp">
   
     <link rel="alternative" href="/atom.xml" title="aboutlan&#39;s Blog" type="application/atom+xml">
   
@@ -199,54 +206,192 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-iOS-记一次导航栏平滑过渡的实现" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
   
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/10/11/hello-world/" class="archive-article-date">
-        <time datetime="2021-10-11T09:00:26.612Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-11</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/10/11/hello-world/">Hello World</a>
-	
+    <h1 class="article-title" itemprop="name">
+      iOS: 记一次导航栏平滑过渡的实现
     </h1>
   
 
 
-        <div class="article-info info-on-right">
-          
-          
+  
+  
+<a href="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/" class="archive-article-date">
+        <time datetime="2017-08-02T09:12:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-02</time>
+</a>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
+  </header>
   
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>随着技术的迭代,现在对App的效果要求越来越高,那么在这篇文章里面我们一起讨论一下如何在控制器做跳转的时候对导航栏做平滑过渡的转场</p>
+<h2 id="构思"><a href="#构思" class="headerlink" title="构思:"></a>构思:</h2><ul>
+<li>首先要获取到导航栏里的子控件来设置其透明度 <strong>(实现透明度变化)</strong></li>
+<li>为所有控制器添加一个导航栏透明度属性,用于记录当前控制器的导航栏透明度 <strong>(记录透明度值)</strong></li>
+<li>通过监听手势滑动来获取源和目的控制器,计算从源到目的控制器的透明度变化,来改变导航栏的透明度 <strong>(实现平滑过渡)</strong></li>
+</ul>
+<p><img src="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-c05e3706e2379b77.webp" alt="bardemo"></p>
+<h2 id="1、实现透明度变化"><a href="#1、实现透明度变化" class="headerlink" title="1、实现透明度变化"></a>1、实现透明度变化</h2><p>要想实现透明度变化,得先获取到导航栏里的子控件,然后设置其alpha值。但是如何获取呢? 首先考虑使用KVC,通过导航栏的 <strong>valueForKey:</strong> 方法来获取子控件对象,但是在不同的系统上,导航栏里的子控件布局排布也是有所不同, 意味着key值并非固定,通过key值拿子控件对象的方法在不同的系统上就很容易抛异常。<br><img src="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-9f0734e455f7b1ad.webp" alt="左:iOS10                    右:iOS9"></p>
+<p>考虑到这一点,我采用了最直接的方式:<strong>遍历导航栏的所有子控件,拿到首个子控件给其设置透明度。</strong>这样不但不需要再去考虑系统的问题了,同时也能满足带颜色的导航栏或者是带背景图的导航栏透明度的变化。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)xa_changeNavBarAlpha:(<span class="built_in">CGFloat</span>)navBarAlpha&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *barSubviews = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="comment">//将导航栏的子控件添加到数组当中,取首个子控件设置透明度(防止导航栏上存在非导航栏自带的控件)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">UIView</span> * view <span class="keyword">in</span> <span class="keyword">self</span>.navigationBar.subviews) &#123;</span><br><span class="line">        <span class="keyword">if</span>(![view isMemberOfClass:[<span class="built_in">UIView</span> <span class="keyword">class</span>]])&#123;</span><br><span class="line">            [barSubviews addObject:view];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">UIView</span> *barBackgroundView = [barSubviews firstObject];</span><br><span class="line">    barBackgroundView.alpha   = navBarAlpha;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h2 id="2、记录透明度"><a href="#2、记录透明度" class="headerlink" title="2、记录透明度"></a>2、记录透明度</h2><p>每个控制器都应该有自己的导航栏透明度且当透明度发生变化后我们都应该把值保存下来,以方便下次的使用,这里我们就给UIViewController添加一个分类并加一个<strong>navBarAlpha</strong>的属性,这样我们就可以直接通过控制器去设置导航栏的透明度啦~</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="built_in">CGFloat</span>)xa_navBarAlpha&#123;</span><br><span class="line">    <span class="keyword">return</span> [objc_getAssociatedObject(<span class="keyword">self</span>, _cmd)floatValue] ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setXa_navBarAlpha:(<span class="built_in">CGFloat</span>)xa_navBarAlpha&#123;</span><br><span class="line">    <span class="keyword">if</span>(xa_navBarAlpha &gt; <span class="number">1</span>)&#123;</span><br><span class="line">        xa_navBarAlpha = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(xa_navBarAlpha &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        xa_navBarAlpha = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, <span class="keyword">@selector</span>(xa_navBarAlpha), @(xa_navBarAlpha), OBJC_ASSOCIATION_RETAIN_NONATOMIC);</span><br><span class="line">    [<span class="keyword">self</span>.navigationController xa_changeNavBarAlpha:xa_navBarAlpha];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3、实现平滑过渡"><a href="#3、实现平滑过渡" class="headerlink" title="3、实现平滑过渡"></a>3、实现平滑过渡</h2><p>现在存在的问题就是我在某个页面设置了导航栏的透明度,back回上一个界面,导航栏的透明度值仍然是上个界面的<br><img src="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-b062cceee72dd4c1.webp" alt="navbug"></p>
+<p>这里做过渡有两种情况,一种是手势滑动back回上一个界面,还有一种情况是直接点击了back按钮回到上一个界面的。根据这两种情况我们分别做一下处理。</p>
+<h3 id="3-1、手势滑动back"><a href="#3-1、手势滑动back" class="headerlink" title="3.1、手势滑动back"></a>3.1、手势滑动back</h3><p>这种情况我们需要去监听导航控制器的手势滑动,导航控制器有个方法 <strong>_updateInteractiveTransition:</strong> ,该方法可以监听手势滑动以及当前转场的进度,我们可以通过swizzing来交换方法实现,来接手 <strong>_updateInteractiveTransition:</strong> 方法调用的监听</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">+ (<span class="keyword">void</span>)load&#123;</span><br><span class="line">    <span class="comment">//交换导航控制器的手势进度转场方法,来监听手势滑动的进度</span></span><br><span class="line">    SEL originalSEL =  <span class="built_in">NSSelectorFromString</span>(<span class="string">@&quot;_updateInteractiveTransition:&quot;</span>);</span><br><span class="line">    SEL swizzledSEL =  <span class="built_in">NSSelectorFromString</span>(<span class="string">@&quot;xa_updateInteractiveTransition:&quot;</span>);</span><br><span class="line">    Method originalMethod = class_getInstanceMethod(<span class="keyword">self</span>,  originalSEL);</span><br><span class="line">    Method swizzledMethod = class_getInstanceMethod(<span class="keyword">self</span>,  swizzledSEL);</span><br><span class="line">    <span class="built_in">BOOL</span> success = class_addMethod(<span class="keyword">self</span>, originalSEL, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));</span><br><span class="line">    <span class="keyword">if</span>(success)&#123;</span><br><span class="line">        class_replaceMethod(<span class="keyword">self</span>, swizzledSEL, method_getImplementation(originalMethod),  method_getTypeEncoding(originalMethod));</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        method_exchangeImplementations(originalMethod, swizzledMethod);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后通过转场的上下文信息,拿到源和目的的控制器navBarAlpha值,再根据percentComplete转场进度参数计算并设置导航栏透明度值,这样就完成了手势滑动的back</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)xa_updateInteractiveTransition:(<span class="built_in">CGFloat</span>)percentComplete&#123;</span><br><span class="line">    [<span class="keyword">self</span> xa_updateInteractiveTransition:percentComplete];</span><br><span class="line">    <span class="built_in">UIViewController</span> *topVC = <span class="keyword">self</span>.topViewController;</span><br><span class="line">    <span class="keyword">if</span>(topVC)&#123;</span><br><span class="line">        <span class="comment">//通过transitionCoordinator拿到转场的两个控制器上下文信息</span></span><br><span class="line">        <span class="keyword">id</span> &lt;<span class="built_in">UIViewControllerTransitionCoordinator</span>&gt; coordinator =  topVC.transitionCoordinator;</span><br><span class="line">        <span class="keyword">if</span>(coordinator != <span class="literal">nil</span>)&#123;</span><br><span class="line">            <span class="comment">//拿到源控制器和目的控制器的透明度(每个控制器都单独保存了一份)</span></span><br><span class="line">            <span class="built_in">CGFloat</span> fromVCAlpha  = [coordinator viewControllerForKey:<span class="built_in">UITransitionContextFromViewControllerKey</span>].xa_navBarAlpha;</span><br><span class="line">            <span class="built_in">CGFloat</span> toVCAlpha    = [coordinator viewControllerForKey:<span class="built_in">UITransitionContextToViewControllerKey</span>].xa_navBarAlpha;</span><br><span class="line">            <span class="comment">//再通过源,目的控制器的导航条透明度和转场的进度(percentComplete)计算转场时导航条的透明度</span></span><br><span class="line">            <span class="built_in">CGFloat</span> newAlpha     = fromVCAlpha + ((toVCAlpha - fromVCAlpha ) * percentComplete);</span><br><span class="line">            <span class="comment">//这里不要直接去修改控制器navBarAlpha属性,会影响目的控制器的navBarAlpha的数值</span></span><br><span class="line">            [<span class="keyword">self</span> xa_changeNavBarAlpha:newAlpha];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-2、按钮点击back"><a href="#3-2、按钮点击back" class="headerlink" title="3.2、按钮点击back"></a>3.2、按钮点击back</h3><p>当点击buttonItem back控制器的时候我们可以在 <strong>viewWillAppear:</strong> 的时候设置回当前控制器的透明度值,所以我们同样要交换 <strong>viewWillAppear:</strong> 方法的实现,那么每当控制器要显示的时候,我们总是要将它重置回当前控制器应有的透明度值。</p>
+<p>这里另外还需要做两个逻辑判断:</p>
+<ul>
+<li>一个是判断手势是否正在滑动。如果是YES表示当前的状态是手势滑动back的状态则不需要处理。</li>
+<li>另外一个逻辑是判断当前控制器是否设置过navBarAlpha的属性值。如果有设置过,那么每次控制器要显示的时候都要将导航栏透明度设置成控制器储存的透明值。反之,我们给这个控制器设置一个默认的透明度值</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)xa_viewWillAppear:(<span class="built_in">BOOL</span>)animated&#123;</span><br><span class="line">    [<span class="keyword">self</span> xa_viewWillAppear:animated];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//当前控制器父控制器是导航控制器并且不是通过手势滑动显示的</span></span><br><span class="line">    <span class="keyword">if</span>([<span class="keyword">self</span>.parentViewController isKindOfClass:[<span class="built_in">UINavigationController</span> <span class="keyword">class</span>]] &amp;&amp;</span><br><span class="line">       (!<span class="keyword">self</span>.navigationController.xa_isGrTransitioning))&#123;</span><br><span class="line">        <span class="comment">//如果在控制器初始化的时候用户设置过导航栏的值,那么我们直接设置该导航栏应有的透明度值,没有设置过的话默认透明度给1</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">self</span>.xa_didSetBarAlpha)&#123;</span><br><span class="line">            [<span class="keyword">self</span>.navigationController xa_changeNavBarAlpha:<span class="keyword">self</span>.xa_navBarAlpha];</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">self</span>.xa_navBarAlpha = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="4、细节优化与调整"><a href="#4、细节优化与调整" class="headerlink" title="4、细节优化与调整"></a>4、细节优化与调整</h2><p>在手势滑动的时候,如果滑动到了一半就松手了,那么导航栏就可能自动完成或者取消返回操作了,导致剩下的导航栏的透明度将无法计算,可以看到firstViewController的导航栏透明度并非是1</p>
+<p><img src="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-68f8ed67253cde46.webp" alt="bug"></p>
+<p>对于这一点的话,我们可以添加手势滑动的交互的状态,如果当前的滑动的过程中中断,那么判断是取消操作还是完成操作,然后再完成剩余的动画效果。<br>首先我们要去监听导航控制器的 <strong>popViewControllerAnimated:</strong> 的方法调用</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">+ (<span class="keyword">void</span>)load&#123;</span><br><span class="line">    <span class="comment">//交换导航控制器的popViewControllerAnimated:方法,来监听什么时候当前控制被back</span></span><br><span class="line">    SEL popOriginalSEL =  <span class="keyword">@selector</span>(popViewControllerAnimated:);</span><br><span class="line">    SEL popSwizzledSEL =  <span class="built_in">NSSelectorFromString</span>(<span class="string">@&quot;xa_popViewControllerAnimated:&quot;</span>);</span><br><span class="line">    Method popOriginalMethod = class_getInstanceMethod(<span class="keyword">self</span>,  popOriginalSEL);</span><br><span class="line">    Method popSwizzledMethod = class_getInstanceMethod(<span class="keyword">self</span>,  popSwizzledSEL);</span><br><span class="line">    <span class="built_in">BOOL</span> popSuccess = class_addMethod(<span class="keyword">self</span>, popOriginalSEL, method_getImplementation(popSwizzledMethod), method_getTypeEncoding(popSwizzledMethod));</span><br><span class="line">    <span class="keyword">if</span>(popSuccess)&#123;</span><br><span class="line">        class_replaceMethod(<span class="keyword">self</span>, popSwizzledSEL, method_getImplementation(popOriginalMethod),  method_getTypeEncoding(popOriginalMethod));</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        method_exchangeImplementations(popOriginalMethod, popSwizzledMethod);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后再通过转场协调器对象监听手势滑动交互的改变</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="built_in">UIViewController</span> *)xa_popViewControllerAnimated:(<span class="built_in">BOOL</span>)animated&#123;</span><br><span class="line">    <span class="built_in">UIViewController</span> *popVc =  [<span class="keyword">self</span> xa_popViewControllerAnimated:animated];</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">self</span>.viewControllers.count &lt;= <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> popVc;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">UIViewController</span> *topVC = [<span class="keyword">self</span>.viewControllers lastObject];</span><br><span class="line">    <span class="keyword">if</span> (topVC != <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">id</span>&lt;<span class="built_in">UIViewControllerTransitionCoordinator</span>&gt; coordinator = topVC.transitionCoordinator;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//监听手势返回的交互改变,如手势滑动过程当中松手就会回调block</span></span><br><span class="line">        <span class="keyword">if</span> (coordinator != <span class="literal">nil</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>([[<span class="built_in">UIDevice</span> currentDevice].systemVersion intValue]  &gt;= <span class="number">10</span>)&#123;<span class="comment">//适配iOS10</span></span><br><span class="line">                [coordinator notifyWhenInteractionChangesUsingBlock:^(<span class="keyword">id</span>&lt;<span class="built_in">UIViewControllerTransitionCoordinatorContext</span>&gt; context)&#123;</span><br><span class="line">                    [<span class="keyword">self</span> dealNavBarChangeAction:context];</span><br><span class="line">                &#125;];</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                [coordinator notifyWhenInteractionEndsUsingBlock:^(<span class="keyword">id</span>&lt;<span class="built_in">UIViewControllerTransitionCoordinatorContext</span>&gt;  _Nonnull context) &#123;</span><br><span class="line">                    [<span class="keyword">self</span> dealNavBarChangeAction:context];</span><br><span class="line">                &#125;];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> popVc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后我们通过转场的上下文信息根据操作(<strong>自动完成还是返回操作</strong>)来获取剩余的动画时长,并完成剩余的动画</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)dealNavBarChangeAction:(<span class="keyword">id</span>&lt;<span class="built_in">UIViewControllerTransitionCoordinatorContext</span>&gt;)context &#123;</span><br><span class="line">    <span class="keyword">if</span> ([context isCancelled]) &#123;<span class="comment">// 取消了(还在当前页面)</span></span><br><span class="line">        <span class="comment">//根据剩余的进度来计算动画时长xa_changeNavBarAlpha</span></span><br><span class="line">        <span class="built_in">CGFloat</span> animdDuration = [context transitionDuration] * [context percentComplete];</span><br><span class="line">        <span class="built_in">CGFloat</span> fromVCAlpha   = [context viewControllerForKey:<span class="built_in">UITransitionContextFromViewControllerKey</span>].xa_navBarAlpha;</span><br><span class="line">        [<span class="built_in">UIView</span> animateWithDuration:animdDuration animations:^&#123;</span><br><span class="line">            [<span class="keyword">self</span> xa_changeNavBarAlpha:fromVCAlpha];</span><br><span class="line">        &#125;];</span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;<span class="comment">// 自动完成(pop到上一个界面了)</span></span><br><span class="line">        </span><br><span class="line">        <span class="built_in">CGFloat</span> animdDuration = [context transitionDuration] * (<span class="number">1</span> -  [context percentComplete]);</span><br><span class="line">        <span class="built_in">CGFloat</span> toVCAlpha     = [context viewControllerForKey:<span class="built_in">UITransitionContextToViewControllerKey</span>].xa_navBarAlpha;</span><br><span class="line">        [<span class="built_in">UIView</span> animateWithDuration:animdDuration animations:^&#123;</span><br><span class="line">            [<span class="keyword">self</span> xa_changeNavBarAlpha:toVCAlpha];</span><br><span class="line">        &#125;];</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后:"></a>最后:</h2><ul>
+<li><p>下期会写一篇全屏pop手势的文章,可以配合该项目一起使用</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition">demo的地址</a>,欢迎star喔~🤗</p>
+</li>
+</ul>
 
     
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/iOS//" class="article-tag-list-link color4">iOS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://aboutlan.github.io/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
           </div>
@@ -275,8 +420,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

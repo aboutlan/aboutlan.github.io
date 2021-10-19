@@ -6,24 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://aboutlan.github.io">
-  <title>iOS 解决控制器转场的一套方案 | aboutlan&#39;s Blog</title>
+  <title>【译总结】Dart Sound Null Safety 概览 | aboutlan&#39;s Blog</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="之前写过了一篇关于 导航栏平滑过渡的实现 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:  想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。  想通过手势就可以完成相反方向的 pop 操作。  可以灵活的控制转场的功能。   源码结构根据上述的几个点实现了一个简单的开源框架:XANavBarTransition">
+  <meta name="description" content="Dart 2.12, Flutter 2 特性 Dart SDK 约束: environment:  sdk: &quot;&gt;&#x3D;2.12.0 &lt;3.0.0&quot;  介绍在对空指针调用方法的时候，Dart 会抛出 NoSuchMethodError 的异常。 &#x2F;&#x2F; Without null safety:bool isEmpty(String string) &#x3D;&gt; strin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS 解决控制器转场的一套方案">
-<meta property="og:url" content="https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/index.html">
+<meta property="og:title" content="【译总结】Dart Sound Null Safety 概览">
+<meta property="og:url" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/index.html">
 <meta property="og:site_name" content="aboutlan&#39;s Blog">
-<meta property="og:description" content="之前写过了一篇关于 导航栏平滑过渡的实现 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:  想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。  想通过手势就可以完成相反方向的 pop 操作。  可以灵活的控制转场的功能。   源码结构根据上述的几个点实现了一个简单的开源框架:XANavBarTransition">
+<meta property="og:description" content="Dart 2.12, Flutter 2 特性 Dart SDK 约束: environment:  sdk: &quot;&gt;&#x3D;2.12.0 &lt;3.0.0&quot;  介绍在对空指针调用方法的时候，Dart 会抛出 NoSuchMethodError 的异常。 &#x2F;&#x2F; Without null safety:bool isEmpty(String string) &#x3D;&gt; strin">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/1128744-effbd54aebd6dc8c.png">
-<meta property="article:published_time" content="2018-09-15T04:00:40.000Z">
-<meta property="article:modified_time" content="2021-10-19T07:14:46.408Z">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/1128744-f6bcef45d210ebf5.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/1128744-0e0e14a6080ee6d3.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/1128744-a420f1a2a1684c4d.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/1128744-e508a631c10f4cd4.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/1128744-9155cb95d2154e3d.png">
+<meta property="article:published_time" content="2021-04-03T04:20:29.000Z">
+<meta property="article:modified_time" content="2021-10-19T07:25:38.643Z">
 <meta property="article:author" content="关于岚">
 <meta property="article:tag" content="HTML,CSS,JavaScript,iOS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/1128744-effbd54aebd6dc8c.png">
+<meta name="twitter:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/1128744-f6bcef45d210ebf5.png">
   
     <link rel="alternative" href="/atom.xml" title="aboutlan&#39;s Blog" type="application/atom+xml">
   
@@ -203,22 +207,22 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-ios-smooth-transition-plan" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-dart-sound-null-safety-overview" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
   
   
     <h1 class="article-title" itemprop="name">
-      iOS 解决控制器转场的一套方案
+      【译总结】Dart Sound Null Safety 概览
     </h1>
   
 
 
   
   
-<a href="/2018/09/15/ios-smooth-transition-plan/" class="archive-article-date">
-        <time datetime="2018-09-15T04:00:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-15</time>
+<a href="/2021/04/03/dart-sound-null-safety-overview/" class="archive-article-date">
+        <time datetime="2021-04-03T04:20:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-03</time>
 </a>
 
   
@@ -227,36 +231,66 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p>之前写过了一篇关于 <strong><a href="https://aboutlan.github.io/2017/08/02/ios-smooth-transition/">导航栏平滑过渡的实现</a></strong> 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:</p>
-<ul>
-<li><p>想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。</p>
-</li>
-<li><p>想通过手势就可以完成相反方向的 pop 操作。</p>
-</li>
-<li><p>可以灵活的控制转场的功能。</p>
-</li>
-</ul>
-<h2 id="源码结构"><a href="#源码结构" class="headerlink" title="源码结构"></a>源码结构</h2><p>根据上述的几个点实现了一个简单的开源框架:<a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition">XANavBarTransition</a> 。在原有 <strong>导航栏平滑过渡</strong> 的基础上，加上了一些转场方面的功能并且最大程度的降低了对程序的入侵。下面来简单讨论一下设计的思路。</p>
-<p><img src="/2018/09/15/ios-smooth-transition-plan/1128744-effbd54aebd6dc8c.png" alt="源码结构"></p>
+    <p>Dart 2.12, Flutter 2 特性</p>
+<p>Dart SDK 约束:</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line">environment:</span><br><span class="line">  sdk: <span class="string">&quot;&gt;=2.12.0 &lt;3.0.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>在对空指针调用方法的时候，Dart 会抛出 <code>NoSuchMethodError</code> 的异常。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Without null safety:</span></span><br><span class="line"><span class="built_in">bool</span> isEmpty(<span class="built_in">String</span> string) =&gt; string.length == <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">  isEmpty(<span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>因为 null 本身在 Dart 中也是个实例，是 Null 类的实例, 而 Null 类中并无此 length getter 方法所以抛异常</strong></p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Null</span> </span>&#123;</span><br><span class="line">  <span class="keyword">factory</span> <span class="built_in">Null</span>._uninstantiable() &#123;</span><br><span class="line">    <span class="keyword">throw</span> UnsupportedError(<span class="string">&#x27;class Null cannot be instantiated&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">external</span> <span class="built_in">int</span> <span class="keyword">get</span> hashCode;</span><br><span class="line"></span><br><span class="line">  <span class="comment"><span class="markdown">/<span class="strong">** Returns </span></span>the<span class="markdown"><span class="strong"> string `&quot;null&quot;`. <span class="emphasis">*/</span></span></span></span></span><br><span class="line">  <span class="built_in">String</span> toString() =&gt; <span class="string">&quot;null&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <span id="more"></span>
 
-<h2 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路"></a>设计思路</h2><p>在设计之初，我想是通过全局的方式来控制导航控制器的转场，后来在实现的过程中发现这种方式并不能让我很好的去管理控制器与控制器之间的转场调度。这也是我在做  <strong>XANavBarTransition</strong> 框架时遇到的一个比较难处理的问题。 <strong>最后拍板：将导航控制器栈中每一个控制器的交互转场配合导航栏平滑过渡作为独立的转场方案(控制器管理着转场会话的创建以及销毁)，导航控制器仍然控制并且管理全局性的属性和方法。</strong> </p>
-<p>上面提到的 <strong>转场方案</strong> 其实就是在控制器创建的时候用户要选择是进行向左还是向右的 push 操作，无论是哪种方式，对应相反的方向就是 pop 操作。所有在控制器栈里的控制器皆是如此。同时还要确定定制化的功能，比如:某个页面我想有 push 功能、某个页面我只想要有 pop 功能等等。</p>
-<p>push 与 pop 的操作都是由内部的具体的 <strong>转场对象</strong> 来进行管理的，该对象会随着控制器的显示而创建，消失而销毁。所以它在每次创建的时候会根据转场方案来进行相应的子类化。</p>
-<p>在最开始的时候是想通过系统自带的 pop 功能来完成，后来发现对其控制力不足。push 与 pop 具体的实现思路其实很简单都是通过对控制器添加手势，根据转场的方案和滑动方向来确定是 push 操作还是 pop 操作,并驱动相应的 <strong>交互式的转场动画</strong> 。</p>
-<p>下面是一段手势识别的代码:</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)gestureRecognizerShouldBegin:(<span class="built_in">UIPanGestureRecognizer</span> *)gestureRecognizer&#123;</span><br><span class="line">    <span class="keyword">if</span>(gestureRecognizer == <span class="keyword">self</span>.interactivePan)&#123;</span><br><span class="line">        <span class="built_in">CGPoint</span> point     = [gestureRecognizer translationInView:<span class="literal">nil</span>];</span><br><span class="line">        <span class="built_in">CGPoint</span> velocity  = [gestureRecognizer velocityInView:<span class="literal">nil</span>];</span><br><span class="line">        <span class="keyword">if</span> (fabs(velocity.y) &gt; fabs(velocity.x)) &#123;<span class="comment">//垂直方向不处理</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">self</span>.nc.xa_isTransitioning)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>([<span class="keyword">self</span> getPushCondition:point])&#123;<span class="comment">//push</span></span><br><span class="line">            <span class="keyword">self</span>.nextVC = [<span class="keyword">self</span>.transitionDelegate xa_nextViewControllerInTransitionMode:<span class="keyword">self</span>.transitionMode];<span class="comment">//是否为有效的push控制器</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">self</span>.nextVC  == <span class="literal">nil</span> ||</span><br><span class="line">               [<span class="keyword">self</span>.nc.childViewControllers containsObject:<span class="keyword">self</span>.nextVC])&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.pushTransitionEnable;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>([<span class="keyword">self</span> getPopCondition:point])&#123;<span class="comment">//pop</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">self</span>.nc.viewControllers.count &lt;= <span class="number">1</span>)&#123;<span class="comment">//栈底控制器不处理</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.popTransitionEnable;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="状态控制"><a href="#状态控制" class="headerlink" title="状态控制"></a>状态控制</h2><p>XANavBarTransition 框架中主要有以下几个状态的控制。</p>
-<ul>
-<li><p>每一个控制器都拥有能否 pop 的能力,这个功能会在手势识别阶段完成。</p>
-</li>
-<li><p>可以控制当前导航控制器下的所有控制器的转场功能。这个功能会在创建转场会话和设置属性的阶段完成。</p>
-</li>
-<li><p>代理回调: <strong>XANavigationControllerObserver</strong> 对象负责监听 <strong>&lt;UINavigationControllerDelegate&gt;</strong> 代理方法。如果App外部有需要监听,可以将实现了 <strong>&lt;UINavigationControllerDelegate&gt;</strong> 协议的代理设置到导航控制器的 <strong>xa_delegate</strong> 属性当中,内部会做转递。</p>
-</li>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><ol>
+<li>能够让在你在开发阶段就可以捕获到由 null 而引发的 app 崩溃错误。</li>
+<li>让程序更快更小，因为不需要对 non-nullable 变量进行判断是否为 null 了。</li>
+</ol>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>默认变量的声明值都不能为 null, 即: <strong>non-nullable</strong>。</li>
+<li>在变量的数据类型声明后加 ? 表示该变量可以有值也可以为 null, 即 <strong>nullable</strong>。  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int? aNullableInt = null;</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>如果大家在框架的使用中有什么问题欢迎给我提 <strong><a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition/issues">issues</a></strong> 或者 <strong><a target="_blank" rel="noopener" href="https://weibo.com/daxiec">@关于岚</a></strong> 。</p>
+<h2 id="核心设计原则"><a href="#核心设计原则" class="headerlink" title="核心设计原则"></a>核心设计原则</h2><ol>
+<li>默认是 non-nullable: 如果没有指定变量为 nullable，默认即为 non-nullable。</li>
+<li>逐步迁移: 在工程中可以同时存在空安全和非空安全混编的代码，并提供工具逐步迁移。</li>
+<li>完全符合健壮性: 只要类型系统确定该变量是 non-nullable，即该变量永远都不会为 null, 并开启了编译器优化，拥有更小的二进制以及更快的运行速度。</li>
+</ol>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h2><p>null-safety相关操作符 <code>! (assertion operator)、？、late</code>, 处理 nullable 的操作符 <code>if、??、?. </code></p>
+<p>late 关键字用于当无法对 non-nullable 立即赋值的时候，可以用该关键字延迟赋值, 注意 late 关键字和 fianl 是可以共存的。以下三点</p>
+<ol>
+<li>不需要立即赋值。</li>
+<li>可以稍后赋值</li>
+<li>在访问之前确保赋值了。(没赋值即访问抛异常 <code>LateInitializationError</code>)</li>
+</ol>
+<p>late 除了可以延迟赋值外，还可以使成员方法懒加载,这对于读取大量耗时资源的时候十分有效，因为这些资源有可能用户不会用到，但是如果一开始就把这些资源就读取进来是没必要的，想做到需要读取的时候再进行读取。</p>
+<p> <strong>?. 操作符号在 null-safety 有短路的功能，例如 person?.dog.age 如果 person 为 null， 那么整条表达式就直接返回 null 了。</strong></p>
+<h2 id="request"><a href="#request" class="headerlink" title="request"></a>request</h2><p>在 null-safety 当中,命名参数 non-nullable 的类型必须要有默认值或是使用 request 关键字来修饰，也就是对于 non-nullable 来说它必须要有值。</p>
+<h2 id="List、Set、Map-中的-null-safety"><a href="#List、Set、Map-中的-null-safety" class="headerlink" title="List、Set、Map 中的 null-safety"></a>List、Set、Map 中的 null-safety</h2><p>在使用集合的时候需要考虑哪一部分是可以为 null 的。</p>
+<h3 id="List、-Set"><a href="#List、-Set" class="headerlink" title="List、 Set"></a>List、 Set</h3><p><img src="/2021/04/03/dart-sound-null-safety-overview/1128744-f6bcef45d210ebf5.png" alt="image.png"></p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map 情况与 List、Set类似, 但有个例外, 当通过 Key 拿 value 的时候，该 value 可能会为 null, 也就是说 map[‘key’] 返回的是一个 nullable</p>
+<p><img src="/2021/04/03/dart-sound-null-safety-overview/1128744-0e0e14a6080ee6d3.png" alt="image.png"></p>
+<h2 id="非健全的空安全"><a href="#非健全的空安全" class="headerlink" title="非健全的空安全"></a>非健全的空安全</h2><p>Dart 提供两种模式:</p>
+<ol>
+<li>混合开发: 为了更加灵活，如果工程中有些库支持了 null-safety 而有些库没有，也是支持这种混合开发，称之为非健全的空安全(unsound null safety)。但当 safe 与 unsafe 的库互相混入无法在运行时保证完全健全,也就是说还是可能会报 <code>NoSuchMethodError</code> 相关错误。</li>
+</ol>
+<p>直接升级到 Flutter 2.0 而没有迁移 App 就是 unsound null safety。<br><img src="/2021/04/03/dart-sound-null-safety-overview/1128744-a420f1a2a1684c4d.png" alt="image.png"></p>
+<ol start="2">
+<li>完全健全(建议):当所有的依赖所有的库全部都迁入 null-safety,此时即为健全的空安全。能够保证 null 的问题并且编译器可以进行优化使得程序更小更快。</li>
+</ol>
+<p><img src="/2021/04/03/dart-sound-null-safety-overview/1128744-e508a631c10f4cd4.png" alt="image.png"></p>
+<h2 id="迁移"><a href="#迁移" class="headerlink" title="迁移"></a>迁移</h2><p>迁移 app/package 前提: </p>
+<ol>
+<li>等待: 等待工程中所有依赖都已经迁移至了 null-safety。</li>
+<li>迁移: 使用迁移工具。</li>
+<li>静态分析: 静态分析暴露出迁移后代码存在的问题，并做修复。</li>
+<li>测试: 测试你的修改是可以运行的。</li>
+</ol>
+<p>通过在 IDE 上增加一些 <strong>hit</strong> 来让工具实现预期的更改。</p>
+<p><img src="/2021/04/03/dart-sound-null-safety-overview/1128744-9155cb95d2154e3d.png" alt="image.png"></p>
+<p><a target="_blank" rel="noopener" href="https://dart.dev/null-safety/migration-guide">迁移指南</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sy4y1a7SA">迁移视频</a></p>
+<h2 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h2><p><a target="_blank" rel="noopener" href="https://nullsafety.dartpad.dev/">DartPad 练习</a><br><a target="_blank" rel="noopener" href="https://dart.dev/null-safety/tour">Null safety feature tour(入门)</a><br><a target="_blank" rel="noopener" href="https://dart.dev/null-safety/understanding-null-safety">Understanding null safety(深入)</a></p>
+<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><p><a target="_blank" rel="noopener" href="https://nullsafety.dartpad.dev/">DartPad 练习</a><br><a target="_blank" rel="noopener" href="https://medium.com/dartlang/announcing-dart-2-12-499a6e689c87">参考资料</a><br><a target="_blank" rel="noopener" href="https://dart.dev/null-safety/migration-guide">迁移指南</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sy4y1a7SA">迁移视频</a><br><a target="_blank" rel="noopener" href="https://github.com/dart-lang/sdk/wiki/Null-safety-migration-status">pub 迁移情况统计</a><br><a target="_blank" rel="noopener" href="https://medium.com/dartlang/dart-and-the-performance-benefits-of-sound-types-6ceedd5b6cdc">Dart and the performance benefits of sound types</a><br><a target="_blank" rel="noopener" href="https://dart.dev/null-safety#known-issues">the known null safety issues fro Dart</a><br><a target="_blank" rel="noopener" href="https://flutter.dev/docs/null-safety#known-issues">the known null safety issues fro flutter</a></p>
 
     
 
@@ -274,7 +308,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/iOS//" class="article-tag-list-link color4">iOS</a>
+        			<a href="/categories/Dart//" class="article-tag-list-link color5">Dart</a>
         		</li>
       		
 		</ul>
@@ -329,7 +363,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/" alt="微信分享二维码"> -->
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-overview/" alt="微信分享二维码"> -->
     </div>
 </div>
 
@@ -344,18 +378,18 @@
 
 <nav id="article-nav">
   
-    <a href="/2021/04/03/dart-sound-null-safety-overview/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/04/03/dart-sound-null-safety-deeper/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          【译总结】Dart Sound Null Safety 概览
+          【译总结】Dart Sound Null Safety 深入分析
         
       </div>
     </a>
   
   
-    <a href="/2018/07/26/extract-system-lib/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">提取系统动态库文件</div>
+    <a href="/2018/09/15/ios-smooth-transition-plan/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">iOS 解决控制器转场的一套方案</div>
       <i class="icon-circle-right"></i>
     </a>
   

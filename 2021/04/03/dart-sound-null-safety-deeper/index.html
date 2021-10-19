@@ -6,24 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://aboutlan.github.io">
-  <title>iOS 解决控制器转场的一套方案 | aboutlan&#39;s Blog</title>
+  <title>【译总结】Dart Sound Null Safety 深入分析 | aboutlan&#39;s Blog</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="之前写过了一篇关于 导航栏平滑过渡的实现 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:  想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。  想通过手势就可以完成相反方向的 pop 操作。  可以灵活的控制转场的功能。   源码结构根据上述的几个点实现了一个简单的开源框架:XANavBarTransition">
+  <meta name="description" content="此文章是学习Understanding null safety的简单总结 类型系统里面的可空特性null 是非常有用的，可代表为一个不存在的值，但如果不注意就会引起异常。 null 本质是 Null 类的实例, 可视为其他任何类型的子类型，换句话说 int num &#x3D; null; 实际是多态的一种表现形式。空指针调用方法&#x2F;属性错误的原因(即NoSuchMethodError 异常)即是来自于调用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS 解决控制器转场的一套方案">
-<meta property="og:url" content="https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/index.html">
+<meta property="og:title" content="【译总结】Dart Sound Null Safety 深入分析">
+<meta property="og:url" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/index.html">
 <meta property="og:site_name" content="aboutlan&#39;s Blog">
-<meta property="og:description" content="之前写过了一篇关于 导航栏平滑过渡的实现 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:  想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。  想通过手势就可以完成相反方向的 pop 操作。  可以灵活的控制转场的功能。   源码结构根据上述的几个点实现了一个简单的开源框架:XANavBarTransition">
+<meta property="og:description" content="此文章是学习Understanding null safety的简单总结 类型系统里面的可空特性null 是非常有用的，可代表为一个不存在的值，但如果不注意就会引起异常。 null 本质是 Null 类的实例, 可视为其他任何类型的子类型，换句话说 int num &#x3D; null; 实际是多态的一种表现形式。空指针调用方法&#x2F;属性错误的原因(即NoSuchMethodError 异常)即是来自于调用">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/1128744-effbd54aebd6dc8c.png">
-<meta property="article:published_time" content="2018-09-15T04:00:40.000Z">
-<meta property="article:modified_time" content="2021-10-19T07:14:46.408Z">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/1128744-813a03ba42a70724.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/1128744-be07e3e4ea29a94f.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/1128744-ae0ba13bb80dc87b.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/1128744-273dcc6b8bb3a39b.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/1128744-74f5cefd17202885.png">
+<meta property="article:published_time" content="2021-04-03T04:40:19.000Z">
+<meta property="article:modified_time" content="2021-10-19T07:33:33.286Z">
 <meta property="article:author" content="关于岚">
 <meta property="article:tag" content="HTML,CSS,JavaScript,iOS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/1128744-effbd54aebd6dc8c.png">
+<meta name="twitter:image" content="https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/1128744-813a03ba42a70724.png">
   
     <link rel="alternative" href="/atom.xml" title="aboutlan&#39;s Blog" type="application/atom+xml">
   
@@ -203,22 +207,22 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-ios-smooth-transition-plan" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-dart-sound-null-safety-deeper" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
   
   
     <h1 class="article-title" itemprop="name">
-      iOS 解决控制器转场的一套方案
+      【译总结】Dart Sound Null Safety 深入分析
     </h1>
   
 
 
   
   
-<a href="/2018/09/15/ios-smooth-transition-plan/" class="archive-article-date">
-        <time datetime="2018-09-15T04:00:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-15</time>
+<a href="/2021/04/03/dart-sound-null-safety-deeper/" class="archive-article-date">
+        <time datetime="2021-04-03T04:40:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-03</time>
 </a>
 
   
@@ -227,36 +231,82 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p>之前写过了一篇关于 <strong><a href="https://aboutlan.github.io/2017/08/02/ios-smooth-transition/">导航栏平滑过渡的实现</a></strong> 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:</p>
-<ul>
-<li><p>想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。</p>
-</li>
-<li><p>想通过手势就可以完成相反方向的 pop 操作。</p>
-</li>
-<li><p>可以灵活的控制转场的功能。</p>
-</li>
-</ul>
-<h2 id="源码结构"><a href="#源码结构" class="headerlink" title="源码结构"></a>源码结构</h2><p>根据上述的几个点实现了一个简单的开源框架:<a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition">XANavBarTransition</a> 。在原有 <strong>导航栏平滑过渡</strong> 的基础上，加上了一些转场方面的功能并且最大程度的降低了对程序的入侵。下面来简单讨论一下设计的思路。</p>
-<p><img src="/2018/09/15/ios-smooth-transition-plan/1128744-effbd54aebd6dc8c.png" alt="源码结构"></p>
+    <p>此文章是学习<a target="_blank" rel="noopener" href="https://dart.dev/null-safety/understanding-null-safety">Understanding null safety</a>的简单总结</p>
+<h2 id="类型系统里面的可空特性"><a href="#类型系统里面的可空特性" class="headerlink" title="类型系统里面的可空特性"></a>类型系统里面的可空特性</h2><p>null 是非常有用的，可代表为一个不存在的值，但如果不注意就会引起异常。</p>
+<p>null 本质是 Null 类的实例, 可视为其他任何类型的子类型，换句话说 int num = null; 实际是多态的一种表现形式。空指针调用方法/属性错误的原因(即<code>NoSuchMethodError</code> 异常)即是来自于调用 null 里面不存在的方法或属性。<br><img src="/2021/04/03/dart-sound-null-safety-deeper/1128744-813a03ba42a70724.png" alt="image.png"></p>
+<h2 id="类型系统里的可空与不可空"><a href="#类型系统里的可空与不可空" class="headerlink" title="类型系统里的可空与不可空"></a>类型系统里的可空与不可空</h2><p>只要更改 Null 的类型层级结构，没有类型可以直接在为 null, 该变量即为 non-nullable, 可解决空指针问题。</p>
+<p><img src="/2021/04/03/dart-sound-null-safety-deeper/1128744-be07e3e4ea29a94f.png" alt="image.png"></p>
+<p>nullable 类型更像是一个基本数据类型和 Null 的联合体(例如: String?)，意味着 Null 会是任何 nullable 类型的子类型。<br><img src="/2021/04/03/dart-sound-null-safety-deeper/1128744-ae0ba13bb80dc87b.png" alt="image.png"></p>
+<p>结合下面例子, <code>info[&#39;familyName&#39;]</code> 取出来将会是一个 null 值, 如果直接转换成 String 那么就会抛 <code>type &#39;Null&#39; is not a subtype of type &#39;String&#39; in type cast</code> 结合第一张图可以知晓原因，null 不是 non-nullable 类型的子类型。 但如果转换为 String? 就能够成功运行，结合第二张图，因为 null 是 String? (nullable 类型的子类型)的子类型。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">dynamic</span>&gt; info = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;laozhang&#x27;</span>&#125;;</span><br><span class="line"><span class="comment">// String familyName = info[&#x27;familyName&#x27;] as String; // error</span></span><br><span class="line"><span class="built_in">String?</span> familyName = info[<span class="string">&#x27;familyName&#x27;</span>] <span class="keyword">as</span> <span class="built_in">String?</span>; <span class="comment">// ok</span></span><br><span class="line"><span class="built_in">print</span>(familyName);</span><br></pre></td></tr></table></figure>
+
+<p>所有的类型就好像被分割成了两部分，non-nullable 类型侧你可以随意的进行访问方法/属性，不用担心会产生空指针问题。non-nullable 侧的变量可以赋值给 nullable 侧的变量，因为这是安全的，反之则不行。<br><img src="/2021/04/03/dart-sound-null-safety-deeper/1128744-273dcc6b8bb3a39b.png" alt="image.png"></p>
 <span id="more"></span>
 
-<h2 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路"></a>设计思路</h2><p>在设计之初，我想是通过全局的方式来控制导航控制器的转场，后来在实现的过程中发现这种方式并不能让我很好的去管理控制器与控制器之间的转场调度。这也是我在做  <strong>XANavBarTransition</strong> 框架时遇到的一个比较难处理的问题。 <strong>最后拍板：将导航控制器栈中每一个控制器的交互转场配合导航栏平滑过渡作为独立的转场方案(控制器管理着转场会话的创建以及销毁)，导航控制器仍然控制并且管理全局性的属性和方法。</strong> </p>
-<p>上面提到的 <strong>转场方案</strong> 其实就是在控制器创建的时候用户要选择是进行向左还是向右的 push 操作，无论是哪种方式，对应相反的方向就是 pop 操作。所有在控制器栈里的控制器皆是如此。同时还要确定定制化的功能，比如:某个页面我想有 push 功能、某个页面我只想要有 pop 功能等等。</p>
-<p>push 与 pop 的操作都是由内部的具体的 <strong>转场对象</strong> 来进行管理的，该对象会随着控制器的显示而创建，消失而销毁。所以它在每次创建的时候会根据转场方案来进行相应的子类化。</p>
-<p>在最开始的时候是想通过系统自带的 pop 功能来完成，后来发现对其控制力不足。push 与 pop 具体的实现思路其实很简单都是通过对控制器添加手势，根据转场的方案和滑动方向来确定是 push 操作还是 pop 操作,并驱动相应的 <strong>交互式的转场动画</strong> 。</p>
-<p>下面是一段手势识别的代码:</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)gestureRecognizerShouldBegin:(<span class="built_in">UIPanGestureRecognizer</span> *)gestureRecognizer&#123;</span><br><span class="line">    <span class="keyword">if</span>(gestureRecognizer == <span class="keyword">self</span>.interactivePan)&#123;</span><br><span class="line">        <span class="built_in">CGPoint</span> point     = [gestureRecognizer translationInView:<span class="literal">nil</span>];</span><br><span class="line">        <span class="built_in">CGPoint</span> velocity  = [gestureRecognizer velocityInView:<span class="literal">nil</span>];</span><br><span class="line">        <span class="keyword">if</span> (fabs(velocity.y) &gt; fabs(velocity.x)) &#123;<span class="comment">//垂直方向不处理</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">self</span>.nc.xa_isTransitioning)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>([<span class="keyword">self</span> getPushCondition:point])&#123;<span class="comment">//push</span></span><br><span class="line">            <span class="keyword">self</span>.nextVC = [<span class="keyword">self</span>.transitionDelegate xa_nextViewControllerInTransitionMode:<span class="keyword">self</span>.transitionMode];<span class="comment">//是否为有效的push控制器</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">self</span>.nextVC  == <span class="literal">nil</span> ||</span><br><span class="line">               [<span class="keyword">self</span>.nc.childViewControllers containsObject:<span class="keyword">self</span>.nextVC])&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.pushTransitionEnable;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>([<span class="keyword">self</span> getPopCondition:point])&#123;<span class="comment">//pop</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">self</span>.nc.viewControllers.count &lt;= <span class="number">1</span>)&#123;<span class="comment">//栈底控制器不处理</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.popTransitionEnable;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="顶部与底部类型"><a href="#顶部与底部类型" class="headerlink" title="顶部与底部类型"></a>顶部与底部类型</h2><p>在 null-safey 之前 Object 是类型层级树中最顶部的类型，而 Null 则是最底部的类型。<br>在一个 non-nullable 类型中, Object? 将是其顶部类型而 Never 是其底部类型。<br>也就是说在 null-safey 中如果要接收一个任意类型的值，使用 <code>Object?</code> 而不是 <code>Object</code> 类型。表示一个底部类型使用 <code>Never</code> 而不是 <code>Null</code>。<br><img src="/2021/04/03/dart-sound-null-safety-deeper/1128744-74f5cefd17202885.png" alt="image.png"></p>
+<h2 id="特性与分析进行优化与改进"><a href="#特性与分析进行优化与改进" class="headerlink" title="特性与分析进行优化与改进"></a>特性与分析进行优化与改进</h2><p>以下优化即是让静态分析变得更聪明了更敏锐了。</p>
+<h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><p>在 null-safety 在函数中如果没有使用 return 返回一个值只会报警告，默认会返回 null。 在 null-safety  中对一个返回值是 non-nullable 类型不允许这么做，必须要有明确的返回值。</p>
+<h3 id="变量初始化"><a href="#变量初始化" class="headerlink" title="变量初始化"></a>变量初始化</h3><p>以下规则仅限于 non-nullable 类型变量初始化规则如下，<strong>原则即是要用之前必须初始化过</strong>:</p>
+<ol>
+<li>全局变量和静态变量声明必须要初始化</li>
+</ol>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">int</span> topLevel = <span class="number">0</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">int</span> staticField = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="状态控制"><a href="#状态控制" class="headerlink" title="状态控制"></a>状态控制</h2><p>XANavBarTransition 框架中主要有以下几个状态的控制。</p>
-<ul>
-<li><p>每一个控制器都拥有能否 pop 的能力,这个功能会在手势识别阶段完成。</p>
-</li>
-<li><p>可以控制当前导航控制器下的所有控制器的转场功能。这个功能会在创建转场会话和设置属性的阶段完成。</p>
-</li>
-<li><p>代理回调: <strong>XANavigationControllerObserver</strong> 对象负责监听 <strong>&lt;UINavigationControllerDelegate&gt;</strong> 代理方法。如果App外部有需要监听,可以将实现了 <strong>&lt;UINavigationControllerDelegate&gt;</strong> 协议的代理设置到导航控制器的 <strong>xa_delegate</strong> 属性当中,内部会做转递。</p>
-</li>
-</ul>
-<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>如果大家在框架的使用中有什么问题欢迎给我提 <strong><a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition/issues">issues</a></strong> 或者 <strong><a target="_blank" rel="noopener" href="https://weibo.com/daxiec">@关于岚</a></strong> 。</p>
+<ol start="2">
+<li>实例变量直接声明时初始化或通过构造器来初始化(或使用 late)</li>
+</ol>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span> </span>&#123;</span><br><span class="line">  <span class="built_in">int</span> atDeclaration = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">int</span> initializingFormal;</span><br><span class="line">  <span class="built_in">int</span> initializationList;</span><br><span class="line"></span><br><span class="line">  SomeClass(<span class="keyword">this</span>.initializingFormal)</span><br><span class="line">      : initializationList = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>局部变量什么时候赋值都可以，但在使用前必须已经赋过值</li>
+</ol>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">int</span> tracingFibonacci(<span class="built_in">int</span> n) &#123;</span><br><span class="line">  <span class="built_in">int</span> result;</span><br><span class="line">  <span class="keyword">if</span> (n &lt; <span class="number">2</span>) &#123;</span><br><span class="line">    result = n;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    result = tracingFibonacci(n - <span class="number">2</span>) + tracingFibonacci(n - <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">print</span>(result);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>命名参数必须有默认值或者是 request 关键词修饰。</li>
+</ol>
+<h3 id="类型提升"><a href="#类型提升" class="headerlink" title="类型提升"></a>类型提升</h3><p>在 null-safety 中解决了对类型提升分析的优化, 如下代码也可以正常运行，Object 实例在 is 判断后会被提升为 List 实例</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="built_in">bool</span> isEmptyList(<span class="built_in">Object</span> object) &#123;</span><br><span class="line">  <span class="keyword">if</span> (object <span class="keyword">is</span>! <span class="built_in">List</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  <span class="keyword">return</span> object.isEmpty; <span class="comment">// &lt;-- Error!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Never"><a href="#Never" class="headerlink" title="Never"></a>Never</h3><p>never 可用于表示中断、抛异常。 可作为类型来使用</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Never</span> wrongType(<span class="built_in">String</span> type, <span class="built_in">Object</span> value) &#123;</span><br><span class="line">  <span class="keyword">throw</span> ArgumentError(<span class="string">&#x27;Expected <span class="subst">$type</span>, but was <span class="subst">$&#123;value.runtimeType&#125;</span>.&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a>赋值</h3><p>对于以 final 修饰的变量赋值分析变得更加灵活、更加聪明了，以下代码在 null-safety 不再会报错。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">int</span> tracingFibonacci(<span class="built_in">int</span> n) &#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">int</span> result;</span><br><span class="line">  <span class="keyword">if</span> (n &lt; <span class="number">2</span>) &#123;</span><br><span class="line">    result = n;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    result = tracingFibonacci(n - <span class="number">2</span>) + tracingFibonacci(n - <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">print</span>(result);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="null-检查进行类型提升"><a href="#null-检查进行类型提升" class="headerlink" title="null 检查进行类型提升"></a>null 检查进行类型提升</h3><p>对 nullable 变量进行 == null 或 != null 等等表达式判断, Dart 会将变量类型提升到 non-nullable 类型, 在对 arguments != null 表达式判断后 List&lt;String&gt;? 提升了为 List&lt;String&gt;</p>
+<p><strong>需要注意的是类型提升对类中的字段是没有效果的。因为字段使用太灵活，静态分析无法判断哪里有使用哪里有检查</strong></p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">String</span> makeCommand(<span class="built_in">String</span> executable, [<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;? arguments]) &#123;</span><br><span class="line">  <span class="keyword">var</span> result = executable;</span><br><span class="line">  <span class="keyword">if</span> (arguments != <span class="keyword">null</span>) &#123;</span><br><span class="line">    result += <span class="string">&#x27; &#x27;</span> + arguments.join(<span class="string">&#x27; &#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">String</span> makeCommand(<span class="built_in">String</span> executable, [<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;? arguments]) &#123;</span><br><span class="line">  <span class="keyword">var</span> result = executable;</span><br><span class="line">  <span class="keyword">if</span> (arguments == <span class="keyword">null</span>) <span class="keyword">return</span> result;</span><br><span class="line">  <span class="keyword">return</span> result + <span class="string">&#x27; &#x27;</span> + arguments.join(<span class="string">&#x27; &#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多余代码警告-Unnecessary-code-warnings"><a href="#多余代码警告-Unnecessary-code-warnings" class="headerlink" title="多余代码警告(Unnecessary code warnings)"></a>多余代码警告(Unnecessary code warnings)</h3><p>对一个 non-nullable 类型进行 null 检查，如: ?.、 == null 、<br> != null 等等静态分析会抛出警告或错误。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">String</span> checkList(<span class="built_in">List?</span> list) &#123;</span><br><span class="line">  <span class="keyword">if</span> (list == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="string">&#x27;No list&#x27;</span>;</span><br><span class="line">  <span class="keyword">if</span> (list?.isEmpty) &#123; <span class="comment">// list?.isEmpty Unnecessary code</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Empty list&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;Got something&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Nullable-类型处理"><a href="#Nullable-类型处理" class="headerlink" title="Nullable 类型处理"></a>Nullable 类型处理</h2><h3 id="空敏感操作符-null-aware"><a href="#空敏感操作符-null-aware" class="headerlink" title="空敏感操作符(null-aware)"></a>空敏感操作符(null-aware)</h3><p>在 null-safty 之前，由于不知道调用链中哪个节点可能会出现 null， 所有每个属性/方法调用全部都用可空 ?. </p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="built_in">String?</span> notAString = <span class="keyword">null</span>;</span><br><span class="line"><span class="built_in">print</span>(notAString?.length?.isEven);</span><br></pre></td></tr></table></figure>
+
+<p>在 null-safty 中, 调用者一旦为 null，那么链中剩下的方法就会被跳过，不会执行，即短路。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line">thing?.doohickey.gizmo</span><br></pre></td></tr></table></figure>
+
+<p>类似空敏感操作符还有: <code>?.. ?[]</code></p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Null-aware cascade:</span></span><br><span class="line">receiver?..method();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Null-aware index operator:</span></span><br><span class="line">receiver?[index];</span><br></pre></td></tr></table></figure>
+
+<h3 id="断言操作符-Null-assertion-operator"><a href="#断言操作符-Null-assertion-operator" class="headerlink" title="断言操作符(Null assertion operator)"></a>断言操作符(Null assertion operator)</h3><p>当一个 nullable 变量可以确认它不会为 null 时，可以通过 as 转换或者 ! 来断言其不会为 null。如果转换失败或断言失败则会抛异常，反之即会转换成 non-nullable 类型。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">String</span> toString() &#123;</span><br><span class="line">  <span class="keyword">if</span> (code == <span class="number">200</span>) <span class="keyword">return</span> <span class="string">&#x27;OK&#x27;</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;ERROR <span class="subst">$code</span> <span class="subst">$&#123;(error as String).toUpperCase()&#125;</span>&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="built_in">String</span> toString() &#123;</span><br><span class="line">  <span class="keyword">if</span> (code == <span class="number">200</span>) <span class="keyword">return</span> <span class="string">&#x27;OK&#x27;</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;ERROR <span class="subst">$code</span> <span class="subst">$&#123;error!.toUpperCase()&#125;</span>&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Late-变量"><a href="#Late-变量" class="headerlink" title="Late 变量"></a>Late 变量</h3><p>类的 non-nullable 属性或字段在使用前必须要被初始化(在构造器初始化列表或是给默认值都可以)，但也可以 <strong>使用修饰符 <code>late</code></strong> , <strong>late 作用将对变量约束从编译时延迟到运行时</strong> 。但需要注意的是，没有赋值就在运行时使用同样会抛异常。</p>
+<h3 id="懒加载"><a href="#懒加载" class="headerlink" title="懒加载"></a>懒加载</h3><p>late 还有个作用就是可以对变量懒加载, <code>_temperature</code> 变量不会在构造实例的时候就直接创建而是会延迟到第一次访问这个。如果这个操作<code>_temperature</code> 变量时候。 对于一些消耗大量资源的操作，可以在有需要的时候再进行。</p>
+<p>默认上由于实例还没有构造完毕，所以不允许初始化值是实例的方法/属性。 <strong>但由于是懒加载,这个初始化值现在就可以访问当前实例的方法/属性，比如在 <code>_readThermometer()</code> 方法就是因为 late 关键字所以可以访问。</strong> </p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Weather</span> </span>&#123;</span><br><span class="line">  <span class="keyword">late</span> <span class="built_in">int</span> _temperature = _readThermometer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Late-final-结合"><a href="#Late-final-结合" class="headerlink" title="Late final 结合"></a>Late final 结合</h3><p>含义即是: 对于 non-nullable 变量不需要在声明时或构造器进行初始化且必须赋值有且只有一次。</p>
+<h3 id="Required-修饰符"><a href="#Required-修饰符" class="headerlink" title="Required 修饰符"></a>Required 修饰符</h3><p>防止 non-nullable 命名参数为 null,类型检查要求命名参数必须使用 required 修饰或者给参数默认值。</p>
+<h3 id="nullable-字段的处理"><a href="#nullable-字段的处理" class="headerlink" title="nullable 字段的处理"></a>nullable 字段的处理</h3><p>上文讲过类型提升对类中的字段是没有效果的如下代码,编译器会报错:</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Coffee</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String?</span> _temperature;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> heat() &#123; _temperature = <span class="string">&#x27;hot&#x27;</span>; &#125;</span><br><span class="line">  <span class="keyword">void</span> chill() &#123; _temperature = <span class="string">&#x27;iced&#x27;</span>; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> checkTemp() &#123;</span><br><span class="line">    <span class="keyword">if</span> (_temperature != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;Ready to serve &#x27;</span> + _temperature + <span class="string">&#x27;!&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">String</span> serve() =&gt; _temperature! + <span class="string">&#x27; coffee&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要处理有几种方案，一种是直接对 _temperature 加断言操作符 !。另外就是将变量先拷贝成局部变量再做类型提升,如果局部变量改了值要记得改赋值回字段。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="keyword">void</span> checkTemp() &#123;</span><br><span class="line">  <span class="keyword">var</span> temperature = _temperature;</span><br><span class="line">  <span class="keyword">if</span> (temperature != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Ready to serve &#x27;</span> + temperature + <span class="string">&#x27;!&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="泛型的可空性"><a href="#泛型的可空性" class="headerlink" title="泛型的可空性"></a>泛型的可空性</h3><p>T 可以是 nullable 类型也可以是 non-nullable 类型。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Using null safety:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Box</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> T object;</span><br><span class="line">  Box(<span class="keyword">this</span>.object);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">  Box&lt;<span class="built_in">String</span>&gt;(<span class="string">&#x27;a string&#x27;</span>);</span><br><span class="line">  Box&lt;<span class="built_in">int?</span>&gt;(<span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     
 
@@ -274,7 +324,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/iOS//" class="article-tag-list-link color4">iOS</a>
+        			<a href="/categories/Dart//" class="article-tag-list-link color5">Dart</a>
         		</li>
       		
 		</ul>
@@ -329,7 +379,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://aboutlan.github.io/2018/09/15/ios-smooth-transition-plan/" alt="微信分享二维码"> -->
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://aboutlan.github.io/2021/04/03/dart-sound-null-safety-deeper/" alt="微信分享二维码"> -->
     </div>
 </div>
 
@@ -344,18 +394,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2021/04/03/dart-sound-null-safety-overview/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          【译总结】Dart Sound Null Safety 概览
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/07/26/extract-system-lib/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">提取系统动态库文件</div>
+    <a href="/2021/04/03/dart-sound-null-safety-overview/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【译总结】Dart Sound Null Safety 概览</div>
       <i class="icon-circle-right"></i>
     </a>
   

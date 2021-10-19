@@ -77,7 +77,7 @@
 			
 				<li><a href="/" >主页</a></li>
 			
-				<li><a href="/archives" >归档</a></li>
+				<li><a href="/archives" >文章目录</a></li>
 			
 				<li><a href="/about" >-关于我-</a></li>
 			
@@ -185,7 +185,7 @@
 				
 					<li style="width: 33.333333333333336%"><a href="/">主页</a></li>
 		        
-					<li style="width: 33.333333333333336%"><a href="/archives">归档</a></li>
+					<li style="width: 33.333333333333336%"><a href="/archives">文章目录</a></li>
 		        
 					<li style="width: 33.333333333333336%"><a href="/about">-关于我-</a></li>
 		        
@@ -206,7 +206,7 @@
             
 
   
-    <article id="post-iOS-记一次导航栏平滑过渡的实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-ios-smooth-transition-plan" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -214,7 +214,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/">iOS: 记一次导航栏平滑过渡的实现</a>
+	  <a class="article-title" href="/2018/09/15/ios-smooth-transition-plan/">iOS 解决控制器转场的一套方案</a>
 	
     </h1>
   
@@ -222,8 +222,8 @@
 
   
   
-<a href="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/" class="archive-article-date">
-        <time datetime="2017-08-02T09:12:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-02</time>
+<a href="/2018/09/15/ios-smooth-transition-plan/" class="archive-article-date">
+        <time datetime="2018-09-15T04:00:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-15</time>
 </a>
 
   
@@ -232,18 +232,235 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p>随着技术的迭代,现在对App的效果要求越来越高,那么在这篇文章里面我们一起讨论一下如何在控制器做跳转的时候对导航栏做平滑过渡的转场</p>
-<h2 id="构思"><a href="#构思" class="headerlink" title="构思:"></a>构思:</h2><ul>
-<li>首先要获取到导航栏里的子控件来设置其透明度 <strong>(实现透明度变化)</strong></li>
-<li>为所有控制器添加一个导航栏透明度属性,用于记录当前控制器的导航栏透明度 <strong>(记录透明度值)</strong></li>
-<li>通过监听手势滑动来获取源和目的控制器,计算从源到目的控制器的透明度变化,来改变导航栏的透明度 <strong>(实现平滑过渡)</strong></li>
+    <p>之前写过了一篇关于 <strong><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/859a1efd2bbf">导航栏平滑过渡的实现</a></strong> 的文章，主要实现的功能是在控制器转场的过程当中为导航栏实现平滑过渡的效果。回到控制器转场本身来说，它还存在着以下几个痛点:</p>
+<ul>
+<li><p>想通过手势就可以轻松搞定向左或是向右滑动的 push 操作。</p>
+</li>
+<li><p>想通过手势就可以完成相反方向的 pop 操作。</p>
+</li>
+<li><p>可以灵活的控制转场的功能。</p>
+</li>
 </ul>
-<p><img src="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-c05e3706e2379b77.webp" alt="bardemo"></p>
-<h2 id="1、实现透明度变化"><a href="#1、实现透明度变化" class="headerlink" title="1、实现透明度变化"></a>1、实现透明度变化</h2><p>要想实现透明度变化,得先获取到导航栏里的子控件,然后设置其alpha值。但是如何获取呢? 首先考虑使用KVC,通过导航栏的 <strong>valueForKey:</strong> 方法来获取子控件对象,但是在不同的系统上,导航栏里的子控件布局排布也是有所不同, 意味着key值并非固定,通过key值拿子控件对象的方法在不同的系统上就很容易抛异常。<br><img src="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/1128744-9f0734e455f7b1ad.webp" alt="左:iOS10                    右:iOS9"></p>
-<p>考虑到这一点,我采用了最直接的方式:<strong>遍历导航栏的所有子控件,拿到首个子控件给其设置透明度。</strong>这样不但不需要再去考虑系统的问题了,同时也能满足带颜色的导航栏或者是带背景图的导航栏透明度的变化。</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)xa_changeNavBarAlpha:(<span class="built_in">CGFloat</span>)navBarAlpha&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *barSubviews = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="comment">//将导航栏的子控件添加到数组当中,取首个子控件设置透明度(防止导航栏上存在非导航栏自带的控件)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">UIView</span> * view <span class="keyword">in</span> <span class="keyword">self</span>.navigationBar.subviews) &#123;</span><br><span class="line">        <span class="keyword">if</span>(![view isMemberOfClass:[<span class="built_in">UIView</span> <span class="keyword">class</span>]])&#123;</span><br><span class="line">            [barSubviews addObject:view];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">UIView</span> *barBackgroundView = [barSubviews firstObject];</span><br><span class="line">    barBackgroundView.alpha   = navBarAlpha;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>##源码结构<br>根据上述的几个点实现了一个简单的开源框架： <a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition">XANavBarTransition</a> 。在原有<strong>导航栏平滑过渡</strong>的基础上，加上了一些转场方面的功能并且最大程度的降低了对程序的入侵。下面来简单讨论一下设计的思路。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1128744-effbd54aebd6dc8c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="源码结构"></p>
+<p>##设计思路</p>
+<p>在设计之初，我想是通过全局的方式来控制导航控制器的转场，后来在实现的过程中发现这种方式并不能让我很好的去管理控制器与控制器之间的转场调度。这也是我在做 <strong>XANavBarTransition</strong> 框架时遇到的一个比较难处理的问题。<strong>最后拍板：将导航控制器栈中每一个控制器的交互转场配合导航栏平滑过渡作为独立的转场方案(控制器管理着转场会话的创建以及销毁)，导航控制器仍然控制并且管理全局性的属性和方法。</strong></p>
+<p>上面提到的<strong>转场方案</strong>其实就是在控制器创建的时候用户要选择是进行向左还是向右的 push 操作，无论是哪种方式，对应相反的方向就是 pop 操作。所有在控制器栈里的控制器皆是如此。同时还要确定定制化的功能，比如:某个页面我想有 push 功能、某个页面我只想要有 pop 功能等等。</p>
+<p>push 与 pop 的操作都是由内部的具体的<strong>转场对象</strong>来进行管理的，该对象会随着控制器的显示而创建，消失而销毁。所以它在每次创建的时候会根据转场方案来进行相应的子类化。</p>
+<p>在最开始的时候是想通过系统自带的 pop 功能来完成，后来发现对其控制力不足。push 与 pop 具体的实现思路其实很简单都是通过对控制器添加手势，根据转场的方案和滑动方向来确定是 push 操作还是 pop 操作,并驱动相应的<strong>交互式的转场动画</strong>。</p>
+<p>下面是一段手势识别的代码:</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)gestureRecognizerShouldBegin:(<span class="built_in">UIPanGestureRecognizer</span> *)gestureRecognizer&#123;</span><br><span class="line">    <span class="keyword">if</span>(gestureRecognizer == <span class="keyword">self</span>.interactivePan)&#123;</span><br><span class="line">        <span class="built_in">CGPoint</span> point     = [gestureRecognizer translationInView:<span class="literal">nil</span>];</span><br><span class="line">        <span class="built_in">CGPoint</span> velocity  = [gestureRecognizer velocityInView:<span class="literal">nil</span>];</span><br><span class="line">        <span class="keyword">if</span> (fabs(velocity.y) &gt; fabs(velocity.x)) &#123;<span class="comment">//垂直方向不处理</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">self</span>.nc.xa_isTransitioning)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>([<span class="keyword">self</span> getPushCondition:point])&#123;<span class="comment">//push</span></span><br><span class="line">            <span class="keyword">self</span>.nextVC = [<span class="keyword">self</span>.transitionDelegate xa_nextViewControllerInTransitionMode:<span class="keyword">self</span>.transitionMode];<span class="comment">//是否为有效的push控制器</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">self</span>.nextVC  == <span class="literal">nil</span> ||</span><br><span class="line">               [<span class="keyword">self</span>.nc.childViewControllers containsObject:<span class="keyword">self</span>.nextVC])&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.pushTransitionEnable;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>([<span class="keyword">self</span> getPopCondition:point])&#123;<span class="comment">//pop</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">self</span>.nc.viewControllers.count &lt;= <span class="number">1</span>)&#123;<span class="comment">//栈底控制器不处理</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.popTransitionEnable;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>##状态控制<br>XANavBarTransition 框架中主要有以下几个状态的控制。</p>
+<ul>
+<li><p>每一个控制器都拥有能否 pop 的能力,这个功能会在手势识别阶段完成。</p>
+</li>
+<li><p>可以控制当前导航控制器下的所有控制器的转场功能。这个功能会在创建转场会话和设置属性的阶段完成。</p>
+</li>
+<li><p>代理回调: <strong>XANavigationControllerObserver</strong> 对象负责监听 <strong>&lt;UINavigationControllerDelegate&gt;</strong> 代理方法。如果App外部有需要监听,可以将实现了 <strong>&lt;UINavigationControllerDelegate&gt;</strong> 协议的代理设置到导航控制器的 <strong>xa_delegate</strong>属性当中,内部会做转递。</p>
+</li>
+</ul>
+<p>##结尾<br>如果大家在框架的使用中有什么问题欢迎给我提 <strong><a target="_blank" rel="noopener" href="https://github.com/aboutlan/XANavBarTransition/issues">issues</a></strong> 或者 **<a target="_blank" rel="noopener" href="https://weibo.com/daxiec">@关于岚</a>**。</p>
+
     
-    <a class="article-more-a" href="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/#more">-查看全文- </a>
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/iOS//" class="article-tag-list-link color4">iOS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2018/09/15/ios-smooth-transition-plan/">全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-extract-system-lib" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2018/07/26/extract-system-lib/">提取系统动态库文件</a>
+	
+    </h1>
+  
+
+
+  
+  
+<a href="/2018/07/26/extract-system-lib/" class="archive-article-date">
+        <time datetime="2018-07-26T11:28:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-26</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><img src="/2018/07/26/extract-system-lib/1128744-c05e3706e2379b77.jpeg"></p>
+<h2 id="dyld-shared-cache文件"><a href="#dyld-shared-cache文件" class="headerlink" title="dyld_shared_cache文件"></a>dyld_shared_cache文件</h2><p>  有时候我们想通过反编译来分析系统的动态库,那么首先就得找到动态库的Mach-O文件。根据tbd对二进制文件位置的描述可以知道系统绝大部分的动态库都是存放在设备的<code>/System/Library/Frameworks</code>目录下。然而通过iFile进入上述目录并未找到对应库的Mach-O文件,这不由让我们对动态库存放的位置产生了疑惑。</p>
+<p>实际上苹果已经将大部分的系统动态库与插件都合并到了 <strong>dyld_shared_cache</strong> 文件当中,以提升性能。该文件存放在设备的<code>/System/Library/Caches/com.apple.dyld/</code>目录下,文件名为 <strong>dyld_shared_cache_armX</strong> (X所代表的是当前设备CPU所支持的指令集架构)。</p>
+<h2 id="提取动态库"><a href="#提取动态库" class="headerlink" title="提取动态库"></a>提取动态库</h2><p>接下来就是要从 <strong>dyld_shared_cache_armX</strong> 文件中提取动态库的Mach-O文件了。网上有jtool、dyld_decache等工具可以提取动态库。这里我们借助苹果提供的 <strong>dsc_extractor</strong> 程序来完成提取的工作。</p>
+<ol>
+<li><p>首先要将设备里的dyld_shared_cache_armX文件拷贝到本机。</p>
+</li>
+<li><p>从苹果的<a target="_blank" rel="noopener" href="https://opensource.apple.com/">开源网站</a>里面下载<a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/dyld/"><strong>dyld源码</strong></a>,这里下载的是最新的 <strong>dyld-519.2.2.tar.gz</strong> 版本。</p>
+<blockquote>
+<p>dyld程序是用来加载链接动态库的,该程序在设备的<code>/usr/lib/dyld</code>路径下</p>
+</blockquote>
+</li>
+<li><p><strong>打开<code>dyld-519.2.2/launch-cache/dsc_extractor.cpp</code>源文件。</strong> 该文件里面有一段main函数的代码。下面是 <strong>dsc_extractor.cpp</strong> 中的 <strong>main函数</strong> 代码:</p>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> ( argc != <span class="number">3</span> ) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(stderr, <span class="string">&quot;usage: dsc_extractor &lt;path-to-cache-file&gt; &lt;path-to-device-dir&gt;\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//void* handle = dlopen(&quot;/Volumes/my/src/dyld/build/Debug/dsc_extractor.bundle&quot;, RTLD_LAZY);</span></span><br><span class="line">	<span class="keyword">void</span>* handle = <span class="built_in">dlopen</span>(<span class="string">&quot;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/usr/lib/dsc_extractor.bundle&quot;</span>, RTLD_LAZY);</span><br><span class="line">	<span class="keyword">if</span> ( handle == <span class="literal">NULL</span> ) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(stderr, <span class="string">&quot;dsc_extractor.bundle could not be loaded\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	extractor_proc proc = (extractor_proc)<span class="built_in">dlsym</span>(handle, <span class="string">&quot;dyld_shared_cache_extract_dylibs_progress&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> ( proc == <span class="literal">NULL</span> ) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(stderr, <span class="string">&quot;dsc_extractor.bundle did not have dyld_shared_cache_extract_dylibs_progress symbol\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> result = (*proc)(argv[<span class="number">1</span>], argv[<span class="number">2</span>], ^(<span class="keyword">unsigned</span> c, <span class="keyword">unsigned</span> total) &#123; <span class="built_in">printf</span>(<span class="string">&quot;%d/%d\n&quot;</span>, c, total); &#125; );</span><br><span class="line">	<span class="built_in">fprintf</span>(stderr, <span class="string">&quot;dyld_shared_cache_extract_dylibs_progress() =&gt; %d\n&quot;</span>, result);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码判断了参数和资源载入的有效性,同时通过<code>usage: dsc_extractor &lt;path-to-cache-file&gt; &lt;path-to-device-dir&gt;</code>错误参数打印的语句可以知道dsc_extractor的使用方式。</p>
+<ol start="4">
+<li> <strong>修改dsc_extractor.cpp文件:</strong> 将#if预处理指令的条件判断 <strong>0改为1</strong> 即可。</li>
+</ol>
+<p> <img src="/2018/07/26/extract-system-lib/1128744-e82c07acf8450c1e.png"></p>
+<ol start="5">
+<li><p><strong>编译dsc_extractor.cpp文件:</strong><br><code>$ clang++ -o dsc_extractor ./dsc_extractor.cpp dsc_iterator.cpp</code></p>
+</li>
+<li><p><strong>运行dsc_extractor开始提取动态库:</strong><br><code>$ ./dsc_extractor dyld_shared_cache文件路径 输出动态库的路径</code><br><img src="/2018/07/26/extract-system-lib/1128744-550f2d0fc53ed6dd.png"></p>
+</li>
+<li><p><strong>查看提取的结果:</strong><br><img src="/2018/07/26/extract-system-lib/1128744-0e46545fbf8faa6d.png"></p>
+</li>
+</ol>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/System//" class="article-tag-list-link color2">System</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2018/07/26/extract-system-lib/">全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-app-webp-format" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2017/10/26/app-webp-format/">浅谈 App 中使用 WebP 作为图片格式的方案</a>
+	
+    </h1>
+  
+
+
+  
+  
+<a href="/2017/10/26/app-webp-format/" class="archive-article-date">
+        <time datetime="2017-10-26T11:04:04.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-26</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="关于WebP"><a href="#关于WebP" class="headerlink" title="关于WebP"></a>关于WebP</h2><p>WebP是由google推出来的一种图片格式,这种格式的主要优势在于 <strong>高效率</strong> , <strong>高压缩率</strong> ,能够加快图片加载速度。</p>
+<p><img src="/2017/10/26/app-webp-format/1128744-aa37365ab3ada48f.png" alt="数据来自智图"></p>
+<p>在移动端中,网络图片加载所消耗流量也是占很大一部分的，我们可以使用WebP格式的图片,来节省网络带宽资源。同时也有很多第三方框架如:iOS当中的SDWebImage、YYImage等框架都是支持静动态的WebP格式图片。Android4.0开始对WebP也有很好的支持。这就给我们移动端的开发者们带来很多便利。</p>
+<p><img src="/2017/10/26/app-webp-format/1128744-69fee66ea9a60e08.gif" alt="应用中使用的大量网络动图"></p>
+    
+    <a class="article-more-a" href="/2017/10/26/app-webp-format/#more">-查看全文- </a>
     
     
 
@@ -270,7 +487,200 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2017/08/02/iOS-%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%B9%B3%E6%BB%91%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0/">全文 >></a>
+      <a class="article-more-a" href="/2017/10/26/app-webp-format/">全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-xcode9-autolayout" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2017/09/26/xcode9-autolayout/">Xcode 9: 更为严谨的AutoLayout</a>
+	
+    </h1>
+  
+
+
+  
+  
+<a href="/2017/09/26/xcode9-autolayout/" class="archive-article-date">
+        <time datetime="2017-09-26T14:49:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-26</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>在适配过程中,使用Xcode9为IB中View正确的添加约束会出现警告。</p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子:"></a>例子:</h2><p>在例子中我只为SmallBtn添加了位置约束,尺寸约束由Intrinsic Content Size(自身内容)来决定,在Xcode8上是没有问题的,但是在Xcode9上面就会提示有警告。</p>
+<p><img src="/2017/09/26/xcode9-autolayout/1128744-c2b7f28470ff1bd2.png" alt="例子"></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>在上述的例子中,Xcode9给了我们一个<code>Trailing constraint is missing,which may cause overlapping with other views</code>的警告。这种警告就是<strong>Localization Issue</strong></p>
+<p><img src="/2017/09/26/xcode9-autolayout/1128744-841e632753635238.png" alt="警告"></p>
+<p>产生的原因是因为在Xcode9中会去考虑本地化、IB多语言的情况。由于语言字符的宽高不同导致像Button、Label等这种依靠自身内容来获取尺寸的控件在不同语言环境下尺寸也会发生改变,这样就可能会造成遮挡住其他的View的这种情况。</p>
+<p><img src="/2017/09/26/xcode9-autolayout/1128744-17d6e4ba6320373a.png" alt="不同环境的对比"></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>如果你能保证布局的正确性,不修复这类警告也不会造成很大的影响。不过看着警告总归是不舒服的,可以动手修复一下。下面举几个 <strong>Localization Issue</strong> 的警告和对应修复的例子。</p>
+<ul>
+<li><p><code>Trailing constraint is missing,which may cause overlapping with other views</code>的警告:需要多加一条约束左或右间距约束。这里是给smallBtn多添加一条右边的约束,<code>smallBtn.Trailing &lt;= RinghtView.Leading</code>(这样就确定了smallBtn最大宽度,就解决了上述的情况了)</p>
+</li>
+<li><p><code>Fixed width constraints may cause clipping</code>的警告:对该宽度约束设置<code>&gt;=widthValue</code></p>
+</li>
+<li><p><code>Fixed leading and traliling constraints with a center constraint may cause clipping.</code>的警告:如果在修复完宽度约束之后有这样的警告,可以去掉左或右某一边约束,使该View的宽度与SmallBtn的宽度相等就可以了</p>
+</li>
+</ul>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>实际上Xcode的警告都会自动给出解决方案来, <strong>大家可以根据自己项目的实际情况来决定添加什么约束</strong> ,这样解决起来会更加方便一点<br><img src="/2017/09/26/xcode9-autolayout/1128744-68b8b1c19cc07b1c.png" alt="约束修复"></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/iOS//" class="article-tag-list-link color4">iOS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2017/09/26/xcode9-autolayout/">全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-ios-smooth-transition" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2017/08/02/ios-smooth-transition/">iOS: 记一次导航栏平滑过渡的实现</a>
+	
+    </h1>
+  
+
+
+  
+  
+<a href="/2017/08/02/ios-smooth-transition/" class="archive-article-date">
+        <time datetime="2017-08-02T09:12:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-02</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>随着技术的迭代,现在对App的效果要求越来越高,那么在这篇文章里面我们一起讨论一下如何在控制器做跳转的时候对导航栏做平滑过渡的转场</p>
+<h2 id="构思"><a href="#构思" class="headerlink" title="构思:"></a>构思:</h2><ul>
+<li>首先要获取到导航栏里的子控件来设置其透明度 <strong>(实现透明度变化)</strong></li>
+<li>为所有控制器添加一个导航栏透明度属性,用于记录当前控制器的导航栏透明度 <strong>(记录透明度值)</strong></li>
+<li>通过监听手势滑动来获取源和目的控制器,计算从源到目的控制器的透明度变化,来改变导航栏的透明度 <strong>(实现平滑过渡)</strong></li>
+</ul>
+<p><img src="/2017/08/02/ios-smooth-transition/1128744-c05e3706e2379b77.webp" alt="bardemo"></p>
+<h2 id="1、实现透明度变化"><a href="#1、实现透明度变化" class="headerlink" title="1、实现透明度变化"></a>1、实现透明度变化</h2><p>要想实现透明度变化,得先获取到导航栏里的子控件,然后设置其alpha值。但是如何获取呢? 首先考虑使用KVC,通过导航栏的 <strong>valueForKey:</strong> 方法来获取子控件对象,但是在不同的系统上,导航栏里的子控件布局排布也是有所不同, 意味着key值并非固定,通过key值拿子控件对象的方法在不同的系统上就很容易抛异常。<br><img src="/2017/08/02/ios-smooth-transition/1128744-9f0734e455f7b1ad.webp" alt="左:iOS10                    右:iOS9"></p>
+<p>考虑到这一点,我采用了最直接的方式:<strong>遍历导航栏的所有子控件,拿到首个子控件给其设置透明度。</strong>这样不但不需要再去考虑系统的问题了,同时也能满足带颜色的导航栏或者是带背景图的导航栏透明度的变化。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)xa_changeNavBarAlpha:(<span class="built_in">CGFloat</span>)navBarAlpha&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *barSubviews = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="comment">//将导航栏的子控件添加到数组当中,取首个子控件设置透明度(防止导航栏上存在非导航栏自带的控件)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">UIView</span> * view <span class="keyword">in</span> <span class="keyword">self</span>.navigationBar.subviews) &#123;</span><br><span class="line">        <span class="keyword">if</span>(![view isMemberOfClass:[<span class="built_in">UIView</span> <span class="keyword">class</span>]])&#123;</span><br><span class="line">            [barSubviews addObject:view];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">UIView</span> *barBackgroundView = [barSubviews firstObject];</span><br><span class="line">    barBackgroundView.alpha   = navBarAlpha;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2017/08/02/ios-smooth-transition/#more">-查看全文- </a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/iOS//" class="article-tag-list-link color4">iOS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2017/08/02/ios-smooth-transition/">全文 >></a>
     </p>
     
 
@@ -310,7 +720,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2018-2021 <a href="https://aboutlan.github.io/" target="_blank">关于岚</a>
+    		&copy; 2017-2021 <a href="https://aboutlan.github.io/" target="_blank">关于岚</a>
     	</div>
       	<div class="footer-right">
 			

@@ -1169,7 +1169,7 @@ pre .doctype,
 pre .function,
 pre .params,
 pre .tag {
-  color: #fff
+  color: #333
 }
 
 pre .at_rule,

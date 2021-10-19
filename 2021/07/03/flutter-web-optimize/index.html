@@ -6,20 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://aboutlan.github.io">
-  <title>Archives: 2021 | aboutlan&#39;s Blog</title>
+  <title>Flutter Web 优化实践 | aboutlan&#39;s Blog</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="关于岚的个人博客，记录生活、技术、随笔。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="aboutlan&#39;s Blog">
-<meta property="og:url" content="https://aboutlan.github.io/archives/2021/index.html">
+  <meta name="description" content="Flutter 2.0 提供了全平台构建应用支持(iOS, Android, Windows, macOS, Linux,  嵌入式), 当然也包括 Web 的稳定版。 Flutter Web 整体的体验上还不错，但依然还有很多需要完善的地方，在实际项目实践中发现以下问题:  SEO 不友好。搜索引擎无法收录，网页没办法获取自然流量。 包体积过大。main.dart.js 单个 js 文件没有拆">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter Web 优化实践">
+<meta property="og:url" content="https://aboutlan.github.io/2021/07/03/flutter-web-optimize/index.html">
 <meta property="og:site_name" content="aboutlan&#39;s Blog">
-<meta property="og:description" content="关于岚的个人博客，记录生活、技术、随笔。">
+<meta property="og:description" content="Flutter 2.0 提供了全平台构建应用支持(iOS, Android, Windows, macOS, Linux,  嵌入式), 当然也包括 Web 的稳定版。 Flutter Web 整体的体验上还不错，但依然还有很多需要完善的地方，在实际项目实践中发现以下问题:  SEO 不友好。搜索引擎无法收录，网页没办法获取自然流量。 包体积过大。main.dart.js 单个 js 文件没有拆">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aboutlan.github.io/2021/07/03/flutter-web-optimize/1_4eNp-BypLrDgEwkyWbm2zw.png">
+<meta property="og:image" content="https://aboutlan.github.io/2021/07/03/flutter-web-optimize/1128744-8e67bd034096287e.webp">
+<meta property="article:published_time" content="2021-07-03T11:40:19.000Z">
+<meta property="article:modified_time" content="2021-10-19T11:53:04.722Z">
 <meta property="article:author" content="关于岚">
 <meta property="article:tag" content="HTML,CSS,JavaScript,iOS">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aboutlan.github.io/2021/07/03/flutter-web-optimize/1_4eNp-BypLrDgEwkyWbm2zw.png">
   
     <link rel="alternative" href="/atom.xml" title="aboutlan&#39;s Blog" type="application/atom+xml">
   
@@ -199,42 +204,88 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-flutter-web-optimize" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
   
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/07/03/flutter-web-optimize/" class="archive-article-date">
-        <time datetime="2021-07-03T11:40:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-03</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/07/03/flutter-web-optimize/">Flutter Web 优化实践</a>
-	
+    <h1 class="article-title" itemprop="name">
+      Flutter Web 优化实践
     </h1>
   
 
 
-        <div class="article-info info-on-right">
-          
-          
+  
+  
+<a href="/2021/07/03/flutter-web-optimize/" class="archive-article-date">
+        <time datetime="2021-07-03T11:40:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-03</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><img src="/2021/07/03/flutter-web-optimize/1_4eNp-BypLrDgEwkyWbm2zw.png" alt="flutter"></p>
+<p>Flutter 2.0 提供了全平台构建应用支持(iOS, Android, Windows, macOS, Linux,  嵌入式), 当然也包括 Web 的稳定版。</p>
+<p>Flutter Web 整体的体验上还不错，但依然还有很多需要完善的地方，在实际项目实践中发现以下问题:</p>
+<ul>
+<li>SEO 不友好。搜索引擎无法收录，网页没办法获取自然流量。</li>
+<li>包体积过大。main.dart.js 单个 js 文件没有拆包且整体包体积过大,导致网页加载速度慢。</li>
+<li>页面没有缓存首次加载，canvaskit 下载时间过长。如果使用 canvaskit 方式来渲染 web 需要额外加载 2.5MB 左右的 canvaskit.wasm。</li>
+<li>白屏用户体验差。由于网页加载过慢，官方尚未提供相应加载指示器或 API 来控制页面加载状态。</li>
+</ul>
+<p>主要问题就是整体包体积过大导致首次无缓存情况下页面加载很慢。整体的思路主要围绕优化体积，代码懒加载，增加加载指示器等方面来提升页面加载时的用户体验。</p>
+<span id="more"></span>
+
+<h2 id="优化包体积"><a href="#优化包体积" class="headerlink" title="优化包体积"></a>优化包体积</h2><h3 id="main-dart-js"><a href="#main-dart-js" class="headerlink" title="main.dart.js"></a>main.dart.js</h3><p>默认情况下 Flutter Web 会将所有 <code>Dart</code> 代码全部转译为一个 <code>JS</code> 文件即 <code>main.dart.js</code>。这样会导致包体积很大。我们可以使用延迟加载的方式进行按需加载, <strong>比如在跳转某一个页面的时候再对该页面的代码进行加载。</strong> </p>
+<p>Dart 当中提供了 <code>deferred</code> 关键字来进行延时加载。具体使用方式可以查看<a target="_blank" rel="noopener" href="https://dart.dev/guides/language/language-tour#lazily-loading-a-library">官方文档</a>。</p>
+<p>同时 <a target="_blank" rel="noopener" href="https://github.com/flutter/gallery">Gallery</a> 项目中对 <code>deferred</code> 进行了封装处理，我对该 Widget 进行简化可以直接拿来参考使用。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:async&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:ealing_widget/common/common_color.dart&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/material.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> LibraryLoader = Future&lt;<span class="keyword">void</span>&gt; <span class="built_in">Function</span>();</span><br><span class="line"><span class="keyword">typedef</span> DeferredWidgetBuilder = Widget <span class="built_in">Function</span>();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">///<span class="markdown">延迟加载组件</span></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DeferredWidget</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  DeferredWidget(<span class="keyword">this</span>.libraryLoader, <span class="keyword">this</span>.createWidget,</span><br><span class="line">      &#123;Key? key, Widget? placeholder&#125;)</span><br><span class="line">      : placeholder =</span><br><span class="line">            placeholder ?? Container(color: CommonColors.color_widget_background),</span><br><span class="line">        <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> LibraryLoader libraryLoader;</span><br><span class="line">  <span class="keyword">final</span> DeferredWidgetBuilder createWidget;</span><br><span class="line">  <span class="keyword">final</span> Widget placeholder;</span><br><span class="line">  <span class="comment">// 存储 libraryLoader 对应的 future 数据</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">final</span> <span class="built_in">Map</span>&lt;LibraryLoader, Future&lt;<span class="keyword">void</span>&gt;&gt; _moduleLoaders = &#123;&#125;;</span><br><span class="line">  <span class="comment">// 存储已经预加载过了的 libraryLoader</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">final</span> <span class="built_in">Set</span>&lt;LibraryLoader&gt; _loadedModules = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> Future&lt;<span class="keyword">void</span>&gt;? preload(LibraryLoader loader) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!_moduleLoaders.containsKey(loader)) &#123;</span><br><span class="line">      _moduleLoaders[loader] = loader().then((<span class="built_in">dynamic</span> _) &#123;</span><br><span class="line">        _loadedModules.add(loader);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _moduleLoaders[loader];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _DeferredWidgetState createState() =&gt; _DeferredWidgetState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_DeferredWidgetState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">DeferredWidget</span>&gt; </span>&#123;</span><br><span class="line">  Widget? _loadedChild;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> initState() &#123;</span><br><span class="line">    <span class="keyword">if</span> (DeferredWidget._loadedModules.contains(widget.libraryLoader)) &#123;</span><br><span class="line">      _onLibraryLoaded();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      DeferredWidget.preload(widget.libraryLoader)</span><br><span class="line">          ?.then((<span class="built_in">dynamic</span> _) =&gt; _onLibraryLoaded());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> _onLibraryLoaded() &#123;</span><br><span class="line">    setState(() &#123;</span><br><span class="line">      _loadedChild = widget.createWidget();</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> _loadedChild ?? widget.placeholder;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 经过 <code>deferred</code> 处理最后生成的 JS 文件就会被拆分很多个，主体 <code>main.dart.js </code> 文件体积也会变小很多。</p>
+<p><img src="/2021/07/03/flutter-web-optimize/1128744-8e67bd034096287e.webp" alt="js 文件"></p>
+<h3 id="字体"><a href="#字体" class="headerlink" title="字体"></a>字体</h3><p>如果项目当中没有自定义字体，Flutter 默认会打包 <code>MaterialIcons-Regular.otf</code> 和 <code>CupertinoIcons.ttf</code> 这两种字体库。</p>
+<p>这两种字体是包含了一些预置的 Material 和 iOS 设计风格 icon，所有体积较大，如果项目当中没有用到相关的 Icon，我们可以对这些字体库进行简化。</p>
+<ol>
+<li><p> 从 <a target="_blank" rel="noopener" href="https://github.com/google/material-design-icons">material-design-icons</a> 中下载 <code>MaterialIcons-Regular.ttf</code> 字体库。</p>
+</li>
+<li><p>在 Web 产物中, 将 <code>MaterialIcons-Regular.ttf</code> 原有的 <code>./build/web/assets/fonts/MaterialIcons-Regular.otf</code> 字体库。</p>
+</li>
+<li><p>可以将 <code>build/web/assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</code> 的字体库删除。</p>
+</li>
+<li><p>修改<code>build/web/assets/FontManifest.json</code> 中字体的相关配置。需要修改字体格式以及去除不用字体的引用路径。</p>
+</li>
+</ol>
+<p>以上操作可以通过编写脚本方式在生成 Web 产物之后进行修改。</p>
+<h3 id="canvaskit-wasm"><a href="#canvaskit-wasm" class="headerlink" title="canvaskit.wasm"></a>canvaskit.wasm</h3><p>canvaskit.wasm 问题在于要加载额外的 2.5 MB左右的库，拖慢了网页的加载速度。目前有两种解决方案:</p>
+<ol>
+<li><p> 将渲染方式改为 html。 但实际上使用 canvaskit 这种渲染方式是比较贴近原生的使用体验的。</p>
+</li>
+<li><p>更换 canvaskit.wasm CDN 地址。推荐一个对开源文件免费的 CDN：<a target="_blank" rel="noopener" href="https://www.jsdelivr.com/">jsdelivr</a> 。接着在执行 flutter build web 生成产物的时候需要增加参数 <code>--dart-define=FLUTTER_WEB_CANVASKIT_URL</code> 来修改 Flutter 预设的地址。例如:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flutter build web --release --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=https://cdn.jsdelivr.net/npm/canvaskit-wasm@0.25.1/bin/</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="gzip"><a href="#gzip" class="headerlink" title="gzip"></a>gzip</h3><p>服务端开启 <code>gzip</code> 之后，拉取压缩过的资源速度会更快一些。</p>
+<h2 id="Loading"><a href="#Loading" class="headerlink" title="Loading"></a>Loading</h2><p>在 <code>index.html</code> 里面放一张图片并设置相应的样式，等程序进入主入口渲染第一帧或者在合适的时机把该元素移除即可。贴一些相关代码供参考。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- index.html --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;loading&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">    <span class="selector-tag">html</span>, <span class="selector-tag">body</span> &#123;</span></span><br><span class="line"><span class="css">      <span class="attribute">width</span>: <span class="number">100%</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">height</span>: <span class="number">100%</span>;</span></span><br><span class="line"><span class="css">    &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-id">#loading</span> &#123;</span></span><br><span class="line"><span class="css">      <span class="attribute">width</span>: <span class="number">100%</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">height</span>: <span class="number">100%</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">position</span>: fixed;</span></span><br><span class="line"><span class="css">      <span class="attribute">top</span>: <span class="number">0</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">left</span>: <span class="number">0</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">z-index</span>: <span class="number">9999</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">background-color</span>: white;</span></span><br><span class="line"><span class="css">    &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-id">#loading</span> <span class="selector-tag">img</span> &#123;</span></span><br><span class="line"><span class="css">      <span class="attribute">width</span>: <span class="number">150px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">height</span>: <span class="number">150px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">position</span>: absolute;</span></span><br><span class="line"><span class="css">      <span class="attribute">top</span>: <span class="number">50%</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">left</span>: <span class="number">50%</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">margin-left</span>: -<span class="number">75px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">margin-top</span>: -<span class="number">75px</span>;</span></span><br><span class="line"><span class="css">    &#125;</span></span><br><span class="line"><span class="css">  </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;loading.gif&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在合适的时机移除该 <img> 元素。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(kIsWeb)&#123;</span><br><span class="line">      <span class="keyword">var</span> loadingElement = html.<span class="built_in">document</span>.getElementById(<span class="string">&quot;loading&quot;</span>);</span><br><span class="line">      loadingElement?.remove();     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>Flutter Web 稳定版刚出来还需要一些时间来完善这些问题，Flutter 团队也给出了后续需要着重要优化的点 <a target="_blank" rel="noopener" href="https://medium.com/flutter/flutter-whats-next-on-the-web-e0454bff964">Flutter: What’s next on the Web?</a>，有兴趣可以了解一下。同时如果有疑问或者有更好的解决方案欢迎与我一起讨论。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -247,103 +298,105 @@
 	</div>
 
 
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://aboutlan.github.io/2021/07/03/flutter-web-optimize/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/04/03/dart-sound-null-safety-deeper/" class="archive-article-date">
-        <time datetime="2021-04-03T04:40:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-03</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/03/dart-sound-null-safety-deeper/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【译总结】Dart Sound Null Safety 深入分析</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/04/03/dart-sound-null-safety-deeper/">【译总结】Dart Sound Null Safety 深入分析</a>
-	
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Dart//" class="article-tag-list-link color5">Dart</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/04/03/dart-sound-null-safety-overview/" class="archive-article-date">
-        <time datetime="2021-04-03T04:20:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-03</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/04/03/dart-sound-null-safety-overview/">【译总结】Dart Sound Null Safety 概览</a>
-	
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Dart//" class="article-tag-list-link color5">Dart</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
+
+
+
 
 
           </div>
@@ -372,8 +425,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

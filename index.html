@@ -206,6 +206,100 @@
             
 
   
+    <article id="post-flutter-web-optimize" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/07/03/flutter-web-optimize/">Flutter Web 优化实践</a>
+	
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/07/03/flutter-web-optimize/" class="archive-article-date">
+        <time datetime="2021-07-03T11:40:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-03</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><img src="/2021/07/03/flutter-web-optimize/1_4eNp-BypLrDgEwkyWbm2zw.png" alt="flutter"></p>
+<p>Flutter 2.0 提供了全平台构建应用支持(iOS, Android, Windows, macOS, Linux,  嵌入式), 当然也包括 Web 的稳定版。</p>
+<p>Flutter Web 整体的体验上还不错，但依然还有很多需要完善的地方，在实际项目实践中发现以下问题:</p>
+<ul>
+<li>SEO 不友好。搜索引擎无法收录，网页没办法获取自然流量。</li>
+<li>包体积过大。main.dart.js 单个 js 文件没有拆包且整体包体积过大,导致网页加载速度慢。</li>
+<li>页面没有缓存首次加载，canvaskit 下载时间过长。如果使用 canvaskit 方式来渲染 web 需要额外加载 2.5MB 左右的 canvaskit.wasm。</li>
+<li>白屏用户体验差。由于网页加载过慢，官方尚未提供相应加载指示器或 API 来控制页面加载状态。</li>
+</ul>
+<p>主要问题就是整体包体积过大导致首次无缓存情况下页面加载很慢。整体的思路主要围绕优化体积，代码懒加载，增加加载指示器等方面来提升页面加载时的用户体验。</p>
+    
+    <a class="article-more-a" href="/2021/07/03/flutter-web-optimize/#more">-查看全文- </a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Flutter//" class="article-tag-list-link color3">Flutter</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/07/03/flutter-web-optimize/">全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-dart-sound-null-safety-deeper" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     

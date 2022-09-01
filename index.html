@@ -206,6 +206,106 @@
             
 
   
+    <article id="post-flutter-expect-animation" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2022/09/01/flutter-expect-animation/">Flutter 设定符合预期的 Animation 实例</a>
+	
+    </h1>
+  
+
+
+  
+  
+<a href="/2022/09/01/flutter-expect-animation/" class="archive-article-date">
+        <time datetime="2022-09-01T07:36:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-09-01</time>
+</a>
+
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><img src="/2022/09/01/flutter-expect-animation/feat-5.png" alt="flutter-Animation"></p>
+<p>Flutter 当中动画有隐式动画与显式动画。实现显示动画最终目的就是获取到<strong>预期的 Animation 实例</strong>。达到这个目的需要一些类或者方法来帮助实现。</p>
+<p>AnimationController 主要是用来控制动画，播放、暂停、监听状态等。同时继承于 Animation，其本质也是一个 Animation 实例。意味着如果没有特殊其他的效果需求那么创建完 AnimationController 就已经达到目的了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">_controller = AnimationController(</span><br><span class="line">     vsync: this,</span><br><span class="line">     duration: Duration(milliseconds: 250),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+
+<p>如果还需要给动画添加例如曲线、获取目标区间值等效果，就需要使用 Tween 或 CurveTween、CurvedAnimation 等给动画加些佐料。动画实现写法比较多，可以通过以下几种方式。</p>
+<ol>
+<li><p>drive 方法是 Animation 实例方法(例如 AnimationController 类)来组合一个 Tween 或是 CurveTween，来扩展动画效果。<strong>传入的参数类型就是其返回值类型</strong>，例如传入的是 AlignmentTween 那么其返回值类型就是 Animation&lt;Alignment&gt;。</p>
+ <figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将控制器与 easeIn 曲线效果以及目标对齐区间值进行相结合</span></span><br><span class="line">Animation&lt;Alignment&gt; _alignment3 = _controller</span><br><span class="line">  .drive(CurveTween(curve: Curves.easeIn))</span><br><span class="line">  .drive(AlignmentTween(</span><br><span class="line">    begin: Alignment.topLeft,</span><br><span class="line">    end: Alignment.topRight,</span><br><span class="line">  ));</span><br></pre></td></tr></table></figure>
+<p> 注意: 该方法只允许 Animation&lt;double&gt; 来调用，其他类型的调用会被断言 <code> Failed assertion: line 169 pos 12: &#39;this is Animation&lt;double&gt;&#39;: is not true.</code></p>
+</li>
+<li><p>chain 方法功能也是组合，但与 drive 方法不同，它是 Animatable 实例(例如 SizeTween)方法用来组合 CurveTween。 其返回值类型是并非 Animation 类型而是 Animatable 类型。这就意味着在使用 chain 方法对目标 Tween 进行组合后，再通过某一些其他方法(例如 drive()、animate() )将其转换为 Animation 类型以便使用。</p>
+  <figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"> <span class="comment">// 对齐区间值与曲线 easeIn 结合</span></span><br><span class="line"> <span class="keyword">final</span> Animatable&lt;Alignment&gt; tween = AlignmentTween(begin: Alignment.topLeft, end: Alignment.topRight)</span><br><span class="line">  .chain(CurveTween(curve: Curves.easeIn));</span><br><span class="line"><span class="comment">// 通过 drive 将控制器与佐料结合获得 Animation 类。</span></span><br><span class="line"><span class="keyword">final</span> Animation&lt;Alignment&gt; alignment2 = _controller.drive(tween);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 该实现在 Tween 拼接完后用 animate 转换，由于加了 ReverseAnimation 效果与上面方向相反</span></span><br><span class="line"><span class="keyword">final</span> Animation&lt;Alignment&gt; alignment3 = AlignmentTween(</span><br><span class="line">  begin: Alignment.topLeft,</span><br><span class="line">  end: Alignment.topRight,</span><br><span class="line">).chain(CurveTween(curve: Curves.easeIn)).animate(ReverseAnimation(_controller!));</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>  最后使用 AnimatedBuilder 并通过读取预期 animation 实例的值来实现动画效果。</p>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> AnimatedBuilder(</span><br><span class="line">      animation: _controller!,</span><br><span class="line">      child: Container(</span><br><span class="line">        width: <span class="number">10</span>,</span><br><span class="line">        height: <span class="number">10</span>,</span><br><span class="line">        color: Colors.green,</span><br><span class="line">      ),</span><br><span class="line">      builder: (context, child) &#123;</span><br><span class="line">        <span class="keyword">return</span> Container(</span><br><span class="line">          alignment: _animation!.value, <span class="comment">// 读取动画从  Alignment.topLeft -&gt;  Alignment.topRight 区间值</span></span><br><span class="line">          width: <span class="number">50</span>,</span><br><span class="line">          height: <span class="number">50</span>,</span><br><span class="line">          color: Colors.red,</span><br><span class="line">          child: child!,</span><br><span class="line">        );</span><br><span class="line">      &#125;,</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Flutter</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2022/09/01/flutter-expect-animation/">全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-listening-review" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1082,7 +1182,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2017-2021 <a href="https://aboutlan.github.io/" target="_blank">关于岚</a>
+    		&copy; 2017-2022 <a href="https://aboutlan.github.io/" target="_blank">关于岚</a>
     	</div>
       	<div class="footer-right">
 			
@@ -1158,6 +1258,10 @@
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Flutter</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
